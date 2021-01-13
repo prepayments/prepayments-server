@@ -8,7 +8,7 @@
     "baseName": "prepayments",
     "packageName": "io.github.prepayments",
     "packageFolder": "io/github/prepayments",
-    "serverPort": "8080",
+    "serverPort": "15000",
     "authenticationType": "jwt",
     "cacheProvider": "hazelcast",
     "enableHibernateCache": true,
