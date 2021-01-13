@@ -6,7 +6,7 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,swagger
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://prepayments-postgresql:5432/prepayments
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://prepayments-postgresql:5432/prepayments-server
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
       - SPRING_DATA_JEST_URI=http://prepayments-elasticsearch:9200
       - SPRING_ELASTICSEARCH_REST_URIS=http://prepayments-elasticsearch:9200
@@ -15,10 +15,10 @@ services:
       - LOCAL_PG_SERVER=${LOCAL_PG_SERVER}
     ports:
       - 15000:15000
-  prepayments-postgresql:
-    extends:
-      file: postgresql.yml
-      service: prepayments-postgresql
+  #  prepayments-postgresql:
+  #    extends:
+  #      file: postgresql.yml
+  #      service: prepayments-postgresql
   prepayments-elasticsearch:
     extends:
       file: elasticsearch.yml
