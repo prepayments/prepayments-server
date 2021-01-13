@@ -42,12 +42,15 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/prepayments
-    username: prepayments
-    password:
+    #url: jdbc:postgresql://localhost:5432/prepayments
+    url: ${LOCAL_PG_SERVER}/prepayments-server
+    username: ${PG_DATABASE_DEV_USER}
+    password: ${PG_DATABASE_DEV_PASSWORD}
     hikari:
       poolName: Hikari
       auto-commit: false
+      maximum-pool-size: 200
+      allow-pool-suspension: true
   jpa:
     database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
     show-sql: true
