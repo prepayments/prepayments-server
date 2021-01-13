@@ -1,0 +1,37 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "io.github.prepayments"
+    },
+    "jhipsterVersion": "6.10.5",
+    "applicationType": "monolith",
+    "baseName": "prepayments",
+    "packageName": "io.github.prepayments",
+    "packageFolder": "io/github/prepayments",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "hazelcast",
+    "enableHibernateCache": true,
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": "elasticsearch",
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "YTM5MGM2Y2E0YmEyZWViZTQ4YTBkYzNmMTc4OGIyZmU5Mzc5NzcwOGUwNjA2OGU4NTVmZDM5NDU0YTU0NzM0Y2NiMzMzMmJkN2U0YTc5NjRhNDBjMjBkNDk2ZjQ5MTZlZTA1ZWU2MDQ1NDdlOWQyNzAwNDU4NGJkODcxMWE3ODk=",
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1610526806050,
+    "testFrameworks": ["gatling", "cucumber"],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "clientPackageManager": "npm",
+    "blueprints": [],
+    "skipClient": true
+  }
+}
