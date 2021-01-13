@@ -1,0 +1,49 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "accountName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "accountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "expenseAccountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "prepaymentNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "prepaymentDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "prepaymentAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "prepaymentPeriods",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "changelogDate": "20210112104730",
+  "dto": "mapstruct",
+  "searchEngine": "elasticsearch",
+  "service": "serviceImpl",
+  "entityTableName": "prepayment_data",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": true,
+  "pagination": "pagination"
+}

@@ -1,0 +1,48 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "accountName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "accountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "expenseAccountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "prepaymentNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "prepaymentDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "transactionAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "amortizationDate",
+      "fieldType": "LocalDate"
+    }
+  ],
+  "changelogDate": "20210111141634",
+  "dto": "mapstruct",
+  "searchEngine": "elasticsearch",
+  "service": "serviceImpl",
+  "entityTableName": "amortization_entry",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": true,
+  "pagination": "pagination"
+}
