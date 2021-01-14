@@ -1,0 +1,47 @@
+{
+  "name": "PrepsFileType",
+  "fields": [
+    {
+      "fieldName": "prepsFileTypeName",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required",
+        "unique"
+      ]
+    },
+    {
+      "fieldName": "prepsFileMediumType",
+      "fieldType": "PrepsFileMediumTypes",
+      "fieldValues": "EXCEL,EXCEL_XLS,EXCEL_XLSX,EXCEL_XLSB,EXCEL_CSV,EXCEL_XML,PDF,POWERPOINT,DOC,TEXT,JSON,HTML5",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fileTemplate",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "prepsfileType",
+      "fieldType": "PrepsFileModelType",
+      "fieldValues": "CURRENCY_LIST,PREPAYMENT_DATA"
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20210114080753",
+  "entityTableName": "preps_file_type",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "preps",
+  "applications": "*"
+}

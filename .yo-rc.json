@@ -33,5 +33,13 @@
     "clientPackageManager": "npm",
     "blueprints": [],
     "skipClient": true
+  },
+  "generator-jhipster-file-handling": {
+    "promptValues": {
+      "gatewayMicroserviceName": "preps",
+      "generalClientRootFolder": "preps",
+      "fileModelTypes": "PREPAYMENT_DATA"
+    },
+    "lastLiquibaseTimestamp": 1610611601000
   }
 }

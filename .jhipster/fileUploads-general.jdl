@@ -1,0 +1,58 @@
+entity PrepsFileType {
+prepsFileTypeName String required unique,
+prepsFileMediumType PrepsFileMediumTypes required,
+description String,
+fileTemplate AnyBlob,
+prepsfileType PrepsFileModelType
+}
+entity PrepsFileUpload {
+description String required,
+fileName String required unique,
+periodFrom LocalDate,
+periodTo LocalDate,
+prepsFileTypeId Long required,
+dataFile AnyBlob required,
+uploadSuccessful Boolean,
+uploadProcessed Boolean,
+uploadToken String unique
+}
+entity PrepsMessageToken {
+description String,
+timeSent Long required,
+tokenValue String required,
+received Boolean,
+actioned Boolean,
+contentFullyEnqueued Boolean
+}
+entity CurrencyTable {
+currencyCode String unique minlength(3) maxlength(3),
+locality CurrencyLocality required,
+currencyName String,
+country String
+}
+enum CurrencyLocality {
+LOCAL,
+FOREIGN
+}
+enum PrepsFileMediumTypes {
+EXCEL,
+EXCEL_XLS,
+EXCEL_XLSX,
+EXCEL_XLSB,
+EXCEL_CSV,
+EXCEL_XML,
+PDF,
+POWERPOINT,
+DOC,
+TEXT,
+JSON,
+HTML5
+}
+enum PrepsFileModelType { CURRENCY_LIST,PREPAYMENT_DATA }
+dto PrepsFileUpload, PrepsMessageToken, CurrencyTable with mapstruct
+paginate PrepsFileType, PrepsFileUpload, PrepsMessageToken, CurrencyTable with pagination
+service PrepsFileUpload, PrepsMessageToken, CurrencyTable with serviceImpl
+service PrepsFileType with serviceClass
+search CurrencyTable with elasticsearch
+filter PrepsFileType, PrepsFileUpload, PrepsMessageToken, CurrencyTable
+clientRootFolder PrepsFileType, PrepsFileUpload, PrepsMessageToken, CurrencyTable with preps
