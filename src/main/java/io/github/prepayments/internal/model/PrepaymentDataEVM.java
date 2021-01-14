@@ -2,9 +2,19 @@ package io.github.prepayments.internal.model;
 
 import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelRow;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@ToString
+@Builder
 public class PrepaymentDataEVM implements Serializable {
 
     @ExcelRow
