@@ -4,11 +4,8 @@ import java.util.List;
 
 /**
  * This interface is intended to be implemented transactionally
- * <p/>
  *  but with batch items persisted for every commit. We are also assuming
- * <p/>
- * that the client uses a search engine. I mean the fact that you are using this
- * <p/>
+ * that the client uses a search engine. I mean the fact that you are using this,
  * right?
  */
 public interface BatchService<T> {
