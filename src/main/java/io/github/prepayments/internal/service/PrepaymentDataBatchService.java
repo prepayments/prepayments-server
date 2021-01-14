@@ -4,12 +4,14 @@ import io.github.prepayments.repository.PrepaymentDataRepository;
 import io.github.prepayments.repository.search.PrepaymentDataSearchRepository;
 import io.github.prepayments.service.dto.PrepaymentDataDTO;
 import io.github.prepayments.service.mapper.PrepaymentDataMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * BatchService implementation for prepayments-data model
  */
+@Service("prepaymentDataBatchService")
 public class PrepaymentDataBatchService implements BatchService<PrepaymentDataDTO> {
 
     private final PrepaymentDataMapper prepaymentDataMapper;
