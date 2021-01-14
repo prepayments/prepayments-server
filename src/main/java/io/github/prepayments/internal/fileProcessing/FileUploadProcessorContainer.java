@@ -9,9 +9,10 @@ import org.springframework.context.annotation.Configuration;
 
 // todo loop for every file model type
 import static io.github.prepayments.domain.enumeration.PrepsFileModelType.CURRENCY_LIST;
+import static io.github.prepayments.domain.enumeration.PrepsFileModelType.PREPAYMENT_DATA;
 
 /**
- * This object maintains a list of all existing processors. This is a short in the dark about automatically configuring the chain at start up
+ * This object maintains a list of all existing processors. This is a shot in the dark about automatically configuring the chain at start up
  */
 @Configuration
 public class FileUploadProcessorContainer {
@@ -19,10 +20,13 @@ public class FileUploadProcessorContainer {
     @Autowired
     private JobLauncher jobLauncher;
 
-    // todo auto-wire each job for each data model type
     @Autowired
     @Qualifier("currencyTablePersistenceJob")
     private Job currencyTablePersistenceJob;
+
+    @Autowired
+    @Qualifier("prepaymentDataListPersistenceJob")
+    private Job prepaymentDataListPersistenceJob;
 
     @Bean("fileUploadProcessorChain")
     public FileUploadProcessorChain fileUploadProcessorChain() {
@@ -31,13 +35,7 @@ public class FileUploadProcessorContainer {
 
         // Create the chain, each should match against it's specific key of data-model type
         theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, currencyTablePersistenceJob, CURRENCY_LIST));
-
-        // TODO Add processors for each data model type
-        //theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, schemeTablePersistenceJob, SCHEME_LIST));
-        //theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, branchTablePersistenceJob, BRANCH_LIST));
-        //theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, sbuTablePersistenceJob, SBU_LIST));
-        //theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, typeTablePersistenceJob, GENERAL_LEDGERS));
-        //theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, depositAccountPersistenceJob, DEPOSIT_LIST));
+        theChain.addProcessor(new BatchSupportedFileUploadProcessor(jobLauncher, prepaymentDataListPersistenceJob, PREPAYMENT_DATA));
 
         return theChain;
     }

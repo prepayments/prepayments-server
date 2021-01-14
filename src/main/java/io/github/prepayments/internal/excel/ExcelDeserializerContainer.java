@@ -1,6 +1,7 @@
 package io.github.prepayments.internal.excel;
 
 import io.github.prepayments.internal.excel.deserializer.DefaultExcelFileDeserializer;
+import io.github.prepayments.internal.model.PrepaymentDataEVM;
 import io.github.prepayments.internal.model.sampleDataModel.CurrencyTableEVM;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +19,8 @@ public class ExcelDeserializerContainer {
         return excelFile -> new DefaultExcelFileDeserializer<>(CurrencyTableEVM.class, getDefaultPoijiOptions()).deserialize(excelFile);
     }
 
-    // todo create bean for every data model
+    @Bean("prepaymentDataExcelFileDeserializer")
+    public ExcelFileDeserializer<PrepaymentDataEVM> prepaymentDataExcelFileDeserializer() {
+        return excelFile -> new DefaultExcelFileDeserializer<>(PrepaymentDataEVM.class, getDefaultPoijiOptions()).deserialize(excelFile);
+    }
 }
