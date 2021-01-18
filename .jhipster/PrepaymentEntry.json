@@ -26,6 +26,10 @@
     {
       "fieldName": "transactionAmount",
       "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "uploadToken",
+      "fieldType": "String"
     }
   ],
   "changelogDate": "20210111140027",

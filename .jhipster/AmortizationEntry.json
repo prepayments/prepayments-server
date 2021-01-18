@@ -34,6 +34,10 @@
     {
       "fieldName": "amortizationDate",
       "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "uploadToken",
+      "fieldType": "String"
     }
   ],
   "changelogDate": "20210111141634",

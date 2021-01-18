@@ -27,6 +27,8 @@ public class AmortizationEntryDTO implements Serializable {
 
     private LocalDate amortizationDate;
 
+    private String uploadToken;
+
     
     public Long getId() {
         return id;
@@ -100,6 +102,14 @@ public class AmortizationEntryDTO implements Serializable {
         this.amortizationDate = amortizationDate;
     }
 
+    public String getUploadToken() {
+        return uploadToken;
+    }
+
+    public void setUploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -130,6 +140,7 @@ public class AmortizationEntryDTO implements Serializable {
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", transactionAmount=" + getTransactionAmount() +
             ", amortizationDate='" + getAmortizationDate() + "'" +
+            ", uploadToken='" + getUploadToken() + "'" +
             "}";
     }
 }

@@ -80,6 +80,7 @@ class PrepaymentDataGatlingTest extends Simulation {
                 , "prepaymentDate":"2020-01-01T00:00:00.000Z"
                 , "prepaymentAmount":"0"
                 , "prepaymentPeriods":"0"
+                , "uploadToken":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_prepaymentData_url"))).exitHereIfFailed

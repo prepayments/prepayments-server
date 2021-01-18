@@ -119,6 +119,9 @@ public class AmortizationEntryQueryService extends QueryService<AmortizationEntr
             if (criteria.getAmortizationDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getAmortizationDate(), AmortizationEntry_.amortizationDate));
             }
+            if (criteria.getUploadToken() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getUploadToken(), AmortizationEntry_.uploadToken));
+            }
         }
         return specification;
     }

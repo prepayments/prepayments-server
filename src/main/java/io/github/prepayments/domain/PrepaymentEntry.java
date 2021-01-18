@@ -44,6 +44,9 @@ public class PrepaymentEntry implements Serializable {
     @Column(name = "transaction_amount", precision = 21, scale = 2)
     private BigDecimal transactionAmount;
 
+    @Column(name = "upload_token")
+    private String uploadToken;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -130,6 +133,19 @@ public class PrepaymentEntry implements Serializable {
     public void setTransactionAmount(BigDecimal transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
+
+    public String getUploadToken() {
+        return uploadToken;
+    }
+
+    public PrepaymentEntry uploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+        return this;
+    }
+
+    public void setUploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -159,6 +175,7 @@ public class PrepaymentEntry implements Serializable {
             ", prepaymentNumber='" + getPrepaymentNumber() + "'" +
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", transactionAmount=" + getTransactionAmount() +
+            ", uploadToken='" + getUploadToken() + "'" +
             "}";
     }
 }

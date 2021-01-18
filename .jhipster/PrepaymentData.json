@@ -34,6 +34,10 @@
     {
       "fieldName": "prepaymentPeriods",
       "fieldType": "Integer"
+    },
+    {
+      "fieldName": "uploadToken",
+      "fieldType": "String"
     }
   ],
   "changelogDate": "20210112104730",

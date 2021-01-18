@@ -27,6 +27,8 @@ public class PrepaymentDataDTO implements Serializable {
 
     private Integer prepaymentPeriods;
 
+    private String uploadToken;
+
     
     public Long getId() {
         return id;
@@ -100,6 +102,14 @@ public class PrepaymentDataDTO implements Serializable {
         this.prepaymentPeriods = prepaymentPeriods;
     }
 
+    public String getUploadToken() {
+        return uploadToken;
+    }
+
+    public void setUploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -130,6 +140,7 @@ public class PrepaymentDataDTO implements Serializable {
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", prepaymentAmount=" + getPrepaymentAmount() +
             ", prepaymentPeriods=" + getPrepaymentPeriods() +
+            ", uploadToken='" + getUploadToken() + "'" +
             "}";
     }
 }

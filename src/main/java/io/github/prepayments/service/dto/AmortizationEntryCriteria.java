@@ -44,6 +44,8 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
 
     private LocalDateFilter amortizationDate;
 
+    private StringFilter uploadToken;
+
     public AmortizationEntryCriteria() {
     }
 
@@ -57,6 +59,7 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
         this.prepaymentDate = other.prepaymentDate == null ? null : other.prepaymentDate.copy();
         this.transactionAmount = other.transactionAmount == null ? null : other.transactionAmount.copy();
         this.amortizationDate = other.amortizationDate == null ? null : other.amortizationDate.copy();
+        this.uploadToken = other.uploadToken == null ? null : other.uploadToken.copy();
     }
 
     @Override
@@ -136,6 +139,14 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
         this.amortizationDate = amortizationDate;
     }
 
+    public StringFilter getUploadToken() {
+        return uploadToken;
+    }
+
+    public void setUploadToken(StringFilter uploadToken) {
+        this.uploadToken = uploadToken;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -155,7 +166,8 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
             Objects.equals(prepaymentNumber, that.prepaymentNumber) &&
             Objects.equals(prepaymentDate, that.prepaymentDate) &&
             Objects.equals(transactionAmount, that.transactionAmount) &&
-            Objects.equals(amortizationDate, that.amortizationDate);
+            Objects.equals(amortizationDate, that.amortizationDate) &&
+            Objects.equals(uploadToken, that.uploadToken);
     }
 
     @Override
@@ -169,7 +181,8 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
         prepaymentNumber,
         prepaymentDate,
         transactionAmount,
-        amortizationDate
+        amortizationDate,
+        uploadToken
         );
     }
 
@@ -186,6 +199,7 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
                 (prepaymentDate != null ? "prepaymentDate=" + prepaymentDate + ", " : "") +
                 (transactionAmount != null ? "transactionAmount=" + transactionAmount + ", " : "") +
                 (amortizationDate != null ? "amortizationDate=" + amortizationDate + ", " : "") +
+                (uploadToken != null ? "uploadToken=" + uploadToken + ", " : "") +
             "}";
     }
 

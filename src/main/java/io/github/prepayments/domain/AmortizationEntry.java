@@ -50,6 +50,9 @@ public class AmortizationEntry implements Serializable {
     @Column(name = "amortization_date")
     private LocalDate amortizationDate;
 
+    @Column(name = "upload_token")
+    private String uploadToken;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -162,6 +165,19 @@ public class AmortizationEntry implements Serializable {
     public void setAmortizationDate(LocalDate amortizationDate) {
         this.amortizationDate = amortizationDate;
     }
+
+    public String getUploadToken() {
+        return uploadToken;
+    }
+
+    public AmortizationEntry uploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+        return this;
+    }
+
+    public void setUploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -193,6 +209,7 @@ public class AmortizationEntry implements Serializable {
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", transactionAmount=" + getTransactionAmount() +
             ", amortizationDate='" + getAmortizationDate() + "'" +
+            ", uploadToken='" + getUploadToken() + "'" +
             "}";
     }
 }

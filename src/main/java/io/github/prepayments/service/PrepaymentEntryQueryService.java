@@ -113,6 +113,9 @@ public class PrepaymentEntryQueryService extends QueryService<PrepaymentEntry> {
             if (criteria.getTransactionAmount() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getTransactionAmount(), PrepaymentEntry_.transactionAmount));
             }
+            if (criteria.getUploadToken() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getUploadToken(), PrepaymentEntry_.uploadToken));
+            }
         }
         return specification;
     }

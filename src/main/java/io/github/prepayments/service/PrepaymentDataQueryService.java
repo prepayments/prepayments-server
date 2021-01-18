@@ -119,6 +119,9 @@ public class PrepaymentDataQueryService extends QueryService<PrepaymentData> {
             if (criteria.getPrepaymentPeriods() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getPrepaymentPeriods(), PrepaymentData_.prepaymentPeriods));
             }
+            if (criteria.getUploadToken() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getUploadToken(), PrepaymentData_.uploadToken));
+            }
         }
         return specification;
     }

@@ -50,6 +50,9 @@ public class PrepaymentData implements Serializable {
     @Column(name = "prepayment_periods")
     private Integer prepaymentPeriods;
 
+    @Column(name = "upload_token")
+    private String uploadToken;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -162,6 +165,19 @@ public class PrepaymentData implements Serializable {
     public void setPrepaymentPeriods(Integer prepaymentPeriods) {
         this.prepaymentPeriods = prepaymentPeriods;
     }
+
+    public String getUploadToken() {
+        return uploadToken;
+    }
+
+    public PrepaymentData uploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+        return this;
+    }
+
+    public void setUploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -193,6 +209,7 @@ public class PrepaymentData implements Serializable {
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", prepaymentAmount=" + getPrepaymentAmount() +
             ", prepaymentPeriods=" + getPrepaymentPeriods() +
+            ", uploadToken='" + getUploadToken() + "'" +
             "}";
     }
 }

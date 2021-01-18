@@ -23,6 +23,8 @@ public class PrepaymentEntryDTO implements Serializable {
 
     private BigDecimal transactionAmount;
 
+    private String uploadToken;
+
     
     public Long getId() {
         return id;
@@ -80,6 +82,14 @@ public class PrepaymentEntryDTO implements Serializable {
         this.transactionAmount = transactionAmount;
     }
 
+    public String getUploadToken() {
+        return uploadToken;
+    }
+
+    public void setUploadToken(String uploadToken) {
+        this.uploadToken = uploadToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -108,6 +118,7 @@ public class PrepaymentEntryDTO implements Serializable {
             ", prepaymentNumber='" + getPrepaymentNumber() + "'" +
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", transactionAmount=" + getTransactionAmount() +
+            ", uploadToken='" + getUploadToken() + "'" +
             "}";
     }
 }

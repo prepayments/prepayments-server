@@ -74,6 +74,9 @@ public class AmortizationEntryResourceIT {
     private static final LocalDate UPDATED_AMORTIZATION_DATE = LocalDate.now(ZoneId.systemDefault());
     private static final LocalDate SMALLER_AMORTIZATION_DATE = LocalDate.ofEpochDay(-1L);
 
+    private static final String DEFAULT_UPLOAD_TOKEN = "AAAAAAAAAA";
+    private static final String UPDATED_UPLOAD_TOKEN = "BBBBBBBBBB";
+
     @Autowired
     private AmortizationEntryRepository amortizationEntryRepository;
 
@@ -117,7 +120,8 @@ public class AmortizationEntryResourceIT {
             .prepaymentNumber(DEFAULT_PREPAYMENT_NUMBER)
             .prepaymentDate(DEFAULT_PREPAYMENT_DATE)
             .transactionAmount(DEFAULT_TRANSACTION_AMOUNT)
-            .amortizationDate(DEFAULT_AMORTIZATION_DATE);
+            .amortizationDate(DEFAULT_AMORTIZATION_DATE)
+            .uploadToken(DEFAULT_UPLOAD_TOKEN);
         return amortizationEntry;
     }
     /**
@@ -135,7 +139,8 @@ public class AmortizationEntryResourceIT {
             .prepaymentNumber(UPDATED_PREPAYMENT_NUMBER)
             .prepaymentDate(UPDATED_PREPAYMENT_DATE)
             .transactionAmount(UPDATED_TRANSACTION_AMOUNT)
-            .amortizationDate(UPDATED_AMORTIZATION_DATE);
+            .amortizationDate(UPDATED_AMORTIZATION_DATE)
+            .uploadToken(UPDATED_UPLOAD_TOKEN);
         return amortizationEntry;
     }
 
@@ -167,6 +172,7 @@ public class AmortizationEntryResourceIT {
         assertThat(testAmortizationEntry.getPrepaymentDate()).isEqualTo(DEFAULT_PREPAYMENT_DATE);
         assertThat(testAmortizationEntry.getTransactionAmount()).isEqualTo(DEFAULT_TRANSACTION_AMOUNT);
         assertThat(testAmortizationEntry.getAmortizationDate()).isEqualTo(DEFAULT_AMORTIZATION_DATE);
+        assertThat(testAmortizationEntry.getUploadToken()).isEqualTo(DEFAULT_UPLOAD_TOKEN);
 
         // Validate the AmortizationEntry in Elasticsearch
         verify(mockAmortizationEntrySearchRepository, times(1)).save(testAmortizationEntry);
@@ -214,7 +220,8 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.[*].prepaymentNumber").value(hasItem(DEFAULT_PREPAYMENT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
-            .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())));
+            .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())))
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
     }
     
     @Test
@@ -235,7 +242,8 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.prepaymentNumber").value(DEFAULT_PREPAYMENT_NUMBER))
             .andExpect(jsonPath("$.prepaymentDate").value(DEFAULT_PREPAYMENT_DATE.toString()))
             .andExpect(jsonPath("$.transactionAmount").value(DEFAULT_TRANSACTION_AMOUNT.intValue()))
-            .andExpect(jsonPath("$.amortizationDate").value(DEFAULT_AMORTIZATION_DATE.toString()));
+            .andExpect(jsonPath("$.amortizationDate").value(DEFAULT_AMORTIZATION_DATE.toString()))
+            .andExpect(jsonPath("$.uploadToken").value(DEFAULT_UPLOAD_TOKEN));
     }
 
 
@@ -962,6 +970,84 @@ public class AmortizationEntryResourceIT {
         defaultAmortizationEntryShouldBeFound("amortizationDate.greaterThan=" + SMALLER_AMORTIZATION_DATE);
     }
 
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByUploadTokenIsEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where uploadToken equals to DEFAULT_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldBeFound("uploadToken.equals=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the amortizationEntryList where uploadToken equals to UPDATED_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("uploadToken.equals=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByUploadTokenIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where uploadToken not equals to DEFAULT_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("uploadToken.notEquals=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the amortizationEntryList where uploadToken not equals to UPDATED_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldBeFound("uploadToken.notEquals=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByUploadTokenIsInShouldWork() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where uploadToken in DEFAULT_UPLOAD_TOKEN or UPDATED_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldBeFound("uploadToken.in=" + DEFAULT_UPLOAD_TOKEN + "," + UPDATED_UPLOAD_TOKEN);
+
+        // Get all the amortizationEntryList where uploadToken equals to UPDATED_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("uploadToken.in=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByUploadTokenIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where uploadToken is not null
+        defaultAmortizationEntryShouldBeFound("uploadToken.specified=true");
+
+        // Get all the amortizationEntryList where uploadToken is null
+        defaultAmortizationEntryShouldNotBeFound("uploadToken.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllAmortizationEntriesByUploadTokenContainsSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where uploadToken contains DEFAULT_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldBeFound("uploadToken.contains=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the amortizationEntryList where uploadToken contains UPDATED_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("uploadToken.contains=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByUploadTokenNotContainsSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where uploadToken does not contain DEFAULT_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("uploadToken.doesNotContain=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the amortizationEntryList where uploadToken does not contain UPDATED_UPLOAD_TOKEN
+        defaultAmortizationEntryShouldBeFound("uploadToken.doesNotContain=" + UPDATED_UPLOAD_TOKEN);
+    }
+
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -977,7 +1063,8 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.[*].prepaymentNumber").value(hasItem(DEFAULT_PREPAYMENT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
-            .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())));
+            .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())))
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
 
         // Check, that the count call also returns 1
         restAmortizationEntryMockMvc.perform(get("/api/amortization-entries/count?sort=id,desc&" + filter))
@@ -1031,7 +1118,8 @@ public class AmortizationEntryResourceIT {
             .prepaymentNumber(UPDATED_PREPAYMENT_NUMBER)
             .prepaymentDate(UPDATED_PREPAYMENT_DATE)
             .transactionAmount(UPDATED_TRANSACTION_AMOUNT)
-            .amortizationDate(UPDATED_AMORTIZATION_DATE);
+            .amortizationDate(UPDATED_AMORTIZATION_DATE)
+            .uploadToken(UPDATED_UPLOAD_TOKEN);
         AmortizationEntryDTO amortizationEntryDTO = amortizationEntryMapper.toDto(updatedAmortizationEntry);
 
         restAmortizationEntryMockMvc.perform(put("/api/amortization-entries")
@@ -1051,6 +1139,7 @@ public class AmortizationEntryResourceIT {
         assertThat(testAmortizationEntry.getPrepaymentDate()).isEqualTo(UPDATED_PREPAYMENT_DATE);
         assertThat(testAmortizationEntry.getTransactionAmount()).isEqualTo(UPDATED_TRANSACTION_AMOUNT);
         assertThat(testAmortizationEntry.getAmortizationDate()).isEqualTo(UPDATED_AMORTIZATION_DATE);
+        assertThat(testAmortizationEntry.getUploadToken()).isEqualTo(UPDATED_UPLOAD_TOKEN);
 
         // Validate the AmortizationEntry in Elasticsearch
         verify(mockAmortizationEntrySearchRepository, times(1)).save(testAmortizationEntry);
@@ -1120,6 +1209,7 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.[*].prepaymentNumber").value(hasItem(DEFAULT_PREPAYMENT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
-            .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())));
+            .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())))
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
     }
 }

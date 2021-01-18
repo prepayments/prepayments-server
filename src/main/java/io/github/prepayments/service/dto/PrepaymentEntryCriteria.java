@@ -40,6 +40,8 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
 
     private BigDecimalFilter transactionAmount;
 
+    private StringFilter uploadToken;
+
     public PrepaymentEntryCriteria() {
     }
 
@@ -51,6 +53,7 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
         this.prepaymentNumber = other.prepaymentNumber == null ? null : other.prepaymentNumber.copy();
         this.prepaymentDate = other.prepaymentDate == null ? null : other.prepaymentDate.copy();
         this.transactionAmount = other.transactionAmount == null ? null : other.transactionAmount.copy();
+        this.uploadToken = other.uploadToken == null ? null : other.uploadToken.copy();
     }
 
     @Override
@@ -114,6 +117,14 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
         this.transactionAmount = transactionAmount;
     }
 
+    public StringFilter getUploadToken() {
+        return uploadToken;
+    }
+
+    public void setUploadToken(StringFilter uploadToken) {
+        this.uploadToken = uploadToken;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -131,7 +142,8 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
             Objects.equals(accountNumber, that.accountNumber) &&
             Objects.equals(prepaymentNumber, that.prepaymentNumber) &&
             Objects.equals(prepaymentDate, that.prepaymentDate) &&
-            Objects.equals(transactionAmount, that.transactionAmount);
+            Objects.equals(transactionAmount, that.transactionAmount) &&
+            Objects.equals(uploadToken, that.uploadToken);
     }
 
     @Override
@@ -143,7 +155,8 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
         accountNumber,
         prepaymentNumber,
         prepaymentDate,
-        transactionAmount
+        transactionAmount,
+        uploadToken
         );
     }
 
@@ -158,6 +171,7 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
                 (prepaymentNumber != null ? "prepaymentNumber=" + prepaymentNumber + ", " : "") +
                 (prepaymentDate != null ? "prepaymentDate=" + prepaymentDate + ", " : "") +
                 (transactionAmount != null ? "transactionAmount=" + transactionAmount + ", " : "") +
+                (uploadToken != null ? "uploadToken=" + uploadToken + ", " : "") +
             "}";
     }
 

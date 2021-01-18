@@ -67,6 +67,9 @@ public class PrepaymentEntryResourceIT {
     private static final BigDecimal UPDATED_TRANSACTION_AMOUNT = new BigDecimal(2);
     private static final BigDecimal SMALLER_TRANSACTION_AMOUNT = new BigDecimal(1 - 1);
 
+    private static final String DEFAULT_UPLOAD_TOKEN = "AAAAAAAAAA";
+    private static final String UPDATED_UPLOAD_TOKEN = "BBBBBBBBBB";
+
     @Autowired
     private PrepaymentEntryRepository prepaymentEntryRepository;
 
@@ -108,7 +111,8 @@ public class PrepaymentEntryResourceIT {
             .accountNumber(DEFAULT_ACCOUNT_NUMBER)
             .prepaymentNumber(DEFAULT_PREPAYMENT_NUMBER)
             .prepaymentDate(DEFAULT_PREPAYMENT_DATE)
-            .transactionAmount(DEFAULT_TRANSACTION_AMOUNT);
+            .transactionAmount(DEFAULT_TRANSACTION_AMOUNT)
+            .uploadToken(DEFAULT_UPLOAD_TOKEN);
         return prepaymentEntry;
     }
     /**
@@ -124,7 +128,8 @@ public class PrepaymentEntryResourceIT {
             .accountNumber(UPDATED_ACCOUNT_NUMBER)
             .prepaymentNumber(UPDATED_PREPAYMENT_NUMBER)
             .prepaymentDate(UPDATED_PREPAYMENT_DATE)
-            .transactionAmount(UPDATED_TRANSACTION_AMOUNT);
+            .transactionAmount(UPDATED_TRANSACTION_AMOUNT)
+            .uploadToken(UPDATED_UPLOAD_TOKEN);
         return prepaymentEntry;
     }
 
@@ -154,6 +159,7 @@ public class PrepaymentEntryResourceIT {
         assertThat(testPrepaymentEntry.getPrepaymentNumber()).isEqualTo(DEFAULT_PREPAYMENT_NUMBER);
         assertThat(testPrepaymentEntry.getPrepaymentDate()).isEqualTo(DEFAULT_PREPAYMENT_DATE);
         assertThat(testPrepaymentEntry.getTransactionAmount()).isEqualTo(DEFAULT_TRANSACTION_AMOUNT);
+        assertThat(testPrepaymentEntry.getUploadToken()).isEqualTo(DEFAULT_UPLOAD_TOKEN);
 
         // Validate the PrepaymentEntry in Elasticsearch
         verify(mockPrepaymentEntrySearchRepository, times(1)).save(testPrepaymentEntry);
@@ -199,7 +205,8 @@ public class PrepaymentEntryResourceIT {
             .andExpect(jsonPath("$.[*].accountNumber").value(hasItem(DEFAULT_ACCOUNT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentNumber").value(hasItem(DEFAULT_PREPAYMENT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
-            .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())));
+            .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
     }
     
     @Test
@@ -218,7 +225,8 @@ public class PrepaymentEntryResourceIT {
             .andExpect(jsonPath("$.accountNumber").value(DEFAULT_ACCOUNT_NUMBER))
             .andExpect(jsonPath("$.prepaymentNumber").value(DEFAULT_PREPAYMENT_NUMBER))
             .andExpect(jsonPath("$.prepaymentDate").value(DEFAULT_PREPAYMENT_DATE.toString()))
-            .andExpect(jsonPath("$.transactionAmount").value(DEFAULT_TRANSACTION_AMOUNT.intValue()));
+            .andExpect(jsonPath("$.transactionAmount").value(DEFAULT_TRANSACTION_AMOUNT.intValue()))
+            .andExpect(jsonPath("$.uploadToken").value(DEFAULT_UPLOAD_TOKEN));
     }
 
 
@@ -762,6 +770,84 @@ public class PrepaymentEntryResourceIT {
         defaultPrepaymentEntryShouldBeFound("transactionAmount.greaterThan=" + SMALLER_TRANSACTION_AMOUNT);
     }
 
+
+    @Test
+    @Transactional
+    public void getAllPrepaymentEntriesByUploadTokenIsEqualToSomething() throws Exception {
+        // Initialize the database
+        prepaymentEntryRepository.saveAndFlush(prepaymentEntry);
+
+        // Get all the prepaymentEntryList where uploadToken equals to DEFAULT_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldBeFound("uploadToken.equals=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the prepaymentEntryList where uploadToken equals to UPDATED_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldNotBeFound("uploadToken.equals=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepaymentEntriesByUploadTokenIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        prepaymentEntryRepository.saveAndFlush(prepaymentEntry);
+
+        // Get all the prepaymentEntryList where uploadToken not equals to DEFAULT_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldNotBeFound("uploadToken.notEquals=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the prepaymentEntryList where uploadToken not equals to UPDATED_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldBeFound("uploadToken.notEquals=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepaymentEntriesByUploadTokenIsInShouldWork() throws Exception {
+        // Initialize the database
+        prepaymentEntryRepository.saveAndFlush(prepaymentEntry);
+
+        // Get all the prepaymentEntryList where uploadToken in DEFAULT_UPLOAD_TOKEN or UPDATED_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldBeFound("uploadToken.in=" + DEFAULT_UPLOAD_TOKEN + "," + UPDATED_UPLOAD_TOKEN);
+
+        // Get all the prepaymentEntryList where uploadToken equals to UPDATED_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldNotBeFound("uploadToken.in=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepaymentEntriesByUploadTokenIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        prepaymentEntryRepository.saveAndFlush(prepaymentEntry);
+
+        // Get all the prepaymentEntryList where uploadToken is not null
+        defaultPrepaymentEntryShouldBeFound("uploadToken.specified=true");
+
+        // Get all the prepaymentEntryList where uploadToken is null
+        defaultPrepaymentEntryShouldNotBeFound("uploadToken.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllPrepaymentEntriesByUploadTokenContainsSomething() throws Exception {
+        // Initialize the database
+        prepaymentEntryRepository.saveAndFlush(prepaymentEntry);
+
+        // Get all the prepaymentEntryList where uploadToken contains DEFAULT_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldBeFound("uploadToken.contains=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the prepaymentEntryList where uploadToken contains UPDATED_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldNotBeFound("uploadToken.contains=" + UPDATED_UPLOAD_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepaymentEntriesByUploadTokenNotContainsSomething() throws Exception {
+        // Initialize the database
+        prepaymentEntryRepository.saveAndFlush(prepaymentEntry);
+
+        // Get all the prepaymentEntryList where uploadToken does not contain DEFAULT_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldNotBeFound("uploadToken.doesNotContain=" + DEFAULT_UPLOAD_TOKEN);
+
+        // Get all the prepaymentEntryList where uploadToken does not contain UPDATED_UPLOAD_TOKEN
+        defaultPrepaymentEntryShouldBeFound("uploadToken.doesNotContain=" + UPDATED_UPLOAD_TOKEN);
+    }
+
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -775,7 +861,8 @@ public class PrepaymentEntryResourceIT {
             .andExpect(jsonPath("$.[*].accountNumber").value(hasItem(DEFAULT_ACCOUNT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentNumber").value(hasItem(DEFAULT_PREPAYMENT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
-            .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())));
+            .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
 
         // Check, that the count call also returns 1
         restPrepaymentEntryMockMvc.perform(get("/api/prepayment-entries/count?sort=id,desc&" + filter))
@@ -827,7 +914,8 @@ public class PrepaymentEntryResourceIT {
             .accountNumber(UPDATED_ACCOUNT_NUMBER)
             .prepaymentNumber(UPDATED_PREPAYMENT_NUMBER)
             .prepaymentDate(UPDATED_PREPAYMENT_DATE)
-            .transactionAmount(UPDATED_TRANSACTION_AMOUNT);
+            .transactionAmount(UPDATED_TRANSACTION_AMOUNT)
+            .uploadToken(UPDATED_UPLOAD_TOKEN);
         PrepaymentEntryDTO prepaymentEntryDTO = prepaymentEntryMapper.toDto(updatedPrepaymentEntry);
 
         restPrepaymentEntryMockMvc.perform(put("/api/prepayment-entries")
@@ -845,6 +933,7 @@ public class PrepaymentEntryResourceIT {
         assertThat(testPrepaymentEntry.getPrepaymentNumber()).isEqualTo(UPDATED_PREPAYMENT_NUMBER);
         assertThat(testPrepaymentEntry.getPrepaymentDate()).isEqualTo(UPDATED_PREPAYMENT_DATE);
         assertThat(testPrepaymentEntry.getTransactionAmount()).isEqualTo(UPDATED_TRANSACTION_AMOUNT);
+        assertThat(testPrepaymentEntry.getUploadToken()).isEqualTo(UPDATED_UPLOAD_TOKEN);
 
         // Validate the PrepaymentEntry in Elasticsearch
         verify(mockPrepaymentEntrySearchRepository, times(1)).save(testPrepaymentEntry);
@@ -912,6 +1001,7 @@ public class PrepaymentEntryResourceIT {
             .andExpect(jsonPath("$.[*].accountNumber").value(hasItem(DEFAULT_ACCOUNT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentNumber").value(hasItem(DEFAULT_PREPAYMENT_NUMBER)))
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
-            .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())));
+            .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
     }
 }
