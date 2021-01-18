@@ -20,7 +20,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -60,7 +59,7 @@ public class PrepaymentDataResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/prepayment-data")
-    public ResponseEntity<PrepaymentDataDTO> createPrepaymentData(@Valid @RequestBody PrepaymentDataDTO prepaymentDataDTO) throws URISyntaxException {
+    public ResponseEntity<PrepaymentDataDTO> createPrepaymentData(@RequestBody PrepaymentDataDTO prepaymentDataDTO) throws URISyntaxException {
         log.debug("REST request to save PrepaymentData : {}", prepaymentDataDTO);
         if (prepaymentDataDTO.getId() != null) {
             throw new BadRequestAlertException("A new prepaymentData cannot already have an ID", ENTITY_NAME, "idexists");
@@ -81,7 +80,7 @@ public class PrepaymentDataResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/prepayment-data")
-    public ResponseEntity<PrepaymentDataDTO> updatePrepaymentData(@Valid @RequestBody PrepaymentDataDTO prepaymentDataDTO) throws URISyntaxException {
+    public ResponseEntity<PrepaymentDataDTO> updatePrepaymentData(@RequestBody PrepaymentDataDTO prepaymentDataDTO) throws URISyntaxException {
         log.debug("REST request to update PrepaymentData : {}", prepaymentDataDTO);
         if (prepaymentDataDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

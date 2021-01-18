@@ -1,7 +1,6 @@
 package io.github.prepayments.service.dto;
 
 import java.time.LocalDate;
-import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -26,7 +25,6 @@ public class PrepaymentDataDTO implements Serializable {
 
     private BigDecimal prepaymentAmount;
 
-    @NotNull
     private Integer prepaymentPeriods;
 
     

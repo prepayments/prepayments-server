@@ -33,8 +33,7 @@
     },
     {
       "fieldName": "prepaymentPeriods",
-      "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
+      "fieldType": "Integer"
     }
   ],
   "changelogDate": "20210112104730",

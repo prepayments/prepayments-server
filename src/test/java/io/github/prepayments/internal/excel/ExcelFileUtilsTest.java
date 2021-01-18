@@ -1,13 +1,10 @@
 package io.github.prepayments.internal.excel;
 
-import com.poiji.annotation.ExcelCell;
-import com.poiji.annotation.ExcelRow;
 import io.github.prepayments.internal.model.PrepaymentDataEVM;
 import io.github.prepayments.internal.model.sampleDataModel.CurrencyTableEVM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,7 +12,6 @@ import static io.github.prepayments.internal.AppConstants.DATETIME_FORMATTER;
 import static io.github.prepayments.internal.excel.ExcelTestUtil.readFile;
 import static io.github.prepayments.internal.excel.ExcelTestUtil.toBytes;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 /**
  * This test shows how the deserializer works inside the ItemReader interface.

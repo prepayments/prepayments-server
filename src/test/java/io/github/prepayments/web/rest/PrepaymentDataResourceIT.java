@@ -198,26 +198,6 @@ public class PrepaymentDataResourceIT {
 
     @Test
     @Transactional
-    public void checkPrepaymentPeriodsIsRequired() throws Exception {
-        int databaseSizeBeforeTest = prepaymentDataRepository.findAll().size();
-        // set the field null
-        prepaymentData.setPrepaymentPeriods(null);
-
-        // Create the PrepaymentData, which fails.
-        PrepaymentDataDTO prepaymentDataDTO = prepaymentDataMapper.toDto(prepaymentData);
-
-
-        restPrepaymentDataMockMvc.perform(post("/api/prepayment-data")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(prepaymentDataDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<PrepaymentData> prepaymentDataList = prepaymentDataRepository.findAll();
-        assertThat(prepaymentDataList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     public void getAllPrepaymentData() throws Exception {
         // Initialize the database
         prepaymentDataRepository.saveAndFlush(prepaymentData);

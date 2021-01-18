@@ -4,7 +4,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
@@ -48,8 +47,7 @@ public class PrepaymentData implements Serializable {
     @Column(name = "prepayment_amount", precision = 21, scale = 2)
     private BigDecimal prepaymentAmount;
 
-    @NotNull
-    @Column(name = "prepayment_periods", nullable = false)
+    @Column(name = "prepayment_periods")
     private Integer prepaymentPeriods;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
