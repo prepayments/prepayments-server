@@ -47,7 +47,7 @@ public class PrepaymentDataListItemReader implements ItemReader<List<PrepaymentD
         final List<PrepaymentDataEVM> unProcessedItems =
             deserializer.deserialize(fileUploadService.findOne(fileId).orElseThrow(() -> new IllegalArgumentException(fileId + " was not found in the system")).getDataFile());
 
-        prepaymentsDataEVMPartition = new ListPartition<>(fileUploadsProperties.getListSize(), unProcessedItems);
+        prepaymentsDataEVMPartition = new ListPartition<>(fileUploadsProperties.getLargeUploads(), unProcessedItems);
 
         log.info("Prepayments-Data items deserialized : {}", unProcessedItems.size());
     }

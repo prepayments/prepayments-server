@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 public class FileUploadsProperties {
 
     private int listSize;
+    private int largeUploads;
 
     public void setListSize(int listSize) {
         this.listSize = listSize;
@@ -20,5 +21,13 @@ public class FileUploadsProperties {
 
     public int getListSize() {
         return listSize;
+    }
+
+    public int getLargeUploads() {
+        return largeUploads;
+    }
+
+    public void setLargeUploads(final int largeUploads) {
+        this.largeUploads = largeUploads;
     }
 }

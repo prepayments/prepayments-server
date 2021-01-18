@@ -13,6 +13,7 @@ services:
       - PG_DATABASE_DEV_USER=${PG_DATABASE_DEV_USER}
       - PG_DATABASE_DEV_PASSWORD=${PG_DATABASE_DEV_PASSWORD}
       - LOCAL_PG_SERVER=${LOCAL_PG_SERVER}
+      - LARGE_UPLOADS_SIZE=${LARGE_UPLOADS_SIZE}
     ports:
       - 15000:15000
   #  prepayments-postgresql:
