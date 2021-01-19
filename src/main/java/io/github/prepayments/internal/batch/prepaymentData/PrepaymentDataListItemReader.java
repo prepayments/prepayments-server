@@ -73,7 +73,9 @@ public class PrepaymentDataListItemReader implements ItemReader<List<PrepaymentD
 
         log.info("Returning list of {} items", forProcessing.size());
 
+        forProcessing.forEach(evm -> { evm.setUploadToken(this.messageToken);});
+
         // return null if the size is zero
-        return forProcessing.size() == 0 ? null : forProcessing.stream().peek(data -> data.setUploadToken(messageToken)).collect(Collectors.toList());
+        return forProcessing.size() == 0 ? null : forProcessing;
     }
 }

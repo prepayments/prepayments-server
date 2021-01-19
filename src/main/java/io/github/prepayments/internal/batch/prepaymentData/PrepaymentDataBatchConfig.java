@@ -95,7 +95,7 @@ public class PrepaymentDataBatchConfig {
         // @formatter:off
         return stepBuilderFactory.get("readPrepaymentDataListFromFile")
             .<List<PrepaymentDataEVM>, List<PrepaymentDataDTO>>chunk(2)
-            .reader(prepaymentDataListItemReader(fileId))
+            .reader(prepaymentDataListItemReader(fileId, messageToken))
             .processor(prepaymentDataListItemProcessor())
             .writer(prepaymentDataListItemWriter())
             .build();
@@ -109,7 +109,7 @@ public class PrepaymentDataBatchConfig {
      */
     @Bean
     @JobScope
-    public PrepaymentDataListItemReader prepaymentDataListItemReader(@Value("#{jobParameters['fileId']}") long fileId) {
+    public PrepaymentDataListItemReader prepaymentDataListItemReader(@Value("#{jobParameters['fileId']}") long fileId, @Value("#{jobParameters['messageToken']}") String messageToken) {
 
         return new PrepaymentDataListItemReader(deserializer, fileUploadService, fileId, messageToken, fileUploadsProperties);
     }
