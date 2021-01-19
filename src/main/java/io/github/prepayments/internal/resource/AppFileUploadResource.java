@@ -5,6 +5,7 @@ import io.github.prepayments.internal.resource.decorator.IFileUploadResource;
 import io.github.prepayments.internal.service.HandlingService;
 import io.github.prepayments.domain.PrepsFileType;
 import io.github.prepayments.service.PrepsFileTypeService;
+import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.PrepsFileUploadCriteria;
 import io.github.prepayments.service.dto.PrepsFileUploadDTO;
 import org.slf4j.Logger;
@@ -37,15 +38,18 @@ public class AppFileUploadResource implements IFileUploadResource {
 
     private final Logger log = LoggerFactory.getLogger(AppFileUploadResource.class);
 
+    private final PrepsFileUploadService fileUploadService;
     private final IFileUploadResource fileUploadResource;
     private final HandlingService<FileNotification> fileNotificationHandlingService;
     private final PrepsFileTypeService fileTypeService;
 
     public AppFileUploadResource(final IFileUploadResource fileUploadResourceDecorator, final HandlingService<FileNotification> fileNotificationHandlingService,
-                                 final PrepsFileTypeService fileTypeService) {
+                                 final PrepsFileTypeService fileTypeService,
+                                 final PrepsFileUploadService fileUploadService) {
         this.fileUploadResource = fileUploadResourceDecorator;
         this.fileNotificationHandlingService = fileNotificationHandlingService;
         this.fileTypeService = fileTypeService;
+        this.fileUploadService = fileUploadService;
     }
 
     /**
@@ -131,11 +135,28 @@ public class AppFileUploadResource implements IFileUploadResource {
     /**
      * {@code DELETE  /file-uploads/:id} : delete the "id" fileUpload.
      *
+     * This method will also delete entities which have been updated with data from the file upload
+     *
      * @param id the id of the fileUploadDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/file-uploads/{id}")
     public ResponseEntity<Void> deleteFileUpload(@PathVariable Long id) {
+
+        PrepsFileUploadDTO fileUploadDTO = fileUploadService.findOne(id)
+                                                            .orElseThrow(() -> new IllegalArgumentException("File id: " + id + " could not be found"));
+
+        PrepsFileType fileType = fileTypeService.findOne(fileUploadDTO.getPrepsFileTypeId())
+                                                .orElseThrow(() -> new NoSuchElementException("FileType of ID : " + fileUploadDTO.getPrepsFileTypeId()+ " not found"));
+
+        fileNotificationHandlingService.handle(FileNotification.builder()
+                                                               .filename(fileUploadDTO.getFileName())
+                                                               .description(fileUploadDTO.getDescription())
+                                                               // TODO apply file-deletion-type
+                                                               .prepsfileModelType(fileType.getPrepsfileType())
+                                                               .fileId(String.valueOf(id))
+                                                               .build()
+        );
 
         return fileUploadResource.deleteFileUpload(id);
     }
