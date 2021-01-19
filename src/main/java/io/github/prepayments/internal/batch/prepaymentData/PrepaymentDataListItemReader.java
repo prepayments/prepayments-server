@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This implementation of the item-reader generates a partitioned list of prepayment-data-evm everytime the
@@ -30,14 +31,19 @@ public class PrepaymentDataListItemReader implements ItemReader<List<PrepaymentD
     private final ExcelFileDeserializer<PrepaymentDataEVM> deserializer;
     private final PrepsFileUploadService fileUploadService;
     private long fileId;
+    private String messageToken;
 
     private ListPartition<PrepaymentDataEVM> prepaymentsDataEVMPartition;
 
-    PrepaymentDataListItemReader(final ExcelFileDeserializer<PrepaymentDataEVM> deserializer, final PrepsFileUploadService fileUploadService, @Value("#{jobParameters['fileId']}") long fileId,
+    PrepaymentDataListItemReader(final ExcelFileDeserializer<PrepaymentDataEVM> deserializer,
+                                 final PrepsFileUploadService fileUploadService,
+                                 @Value("#{jobParameters['fileId']}") long fileId,
+                                 @Value("#{jobParameters['messageToken']}") String messageToken,
                                 final FileUploadsProperties fileUploadsProperties) {
         this.deserializer = deserializer;
         this.fileUploadService = fileUploadService;
         this.fileId = fileId;
+        this.messageToken = messageToken;
         this.fileUploadsProperties = fileUploadsProperties;
     }
 
@@ -67,6 +73,7 @@ public class PrepaymentDataListItemReader implements ItemReader<List<PrepaymentD
 
         log.info("Returning list of {} items", forProcessing.size());
 
-        return forProcessing.size() == 0 ? null : forProcessing;
+        // return null if the size is zero
+        return forProcessing.size() == 0 ? null : forProcessing.stream().peek(data -> data.setUploadToken(messageToken)).collect(Collectors.toList());
     }
 }

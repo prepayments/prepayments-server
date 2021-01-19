@@ -32,6 +32,9 @@ public class PrepaymentDataBatchConfig {
     @Value("#{jobParameters['startUpTime']}")
     private static long startUpTime;
 
+    @Value("#{jobParameters['messageToken']}")
+    private static String messageToken;
+
     private final JobBuilderFactory jobBuilderFactory;
 
     private final StepBuilderFactory stepBuilderFactory;
@@ -108,6 +111,6 @@ public class PrepaymentDataBatchConfig {
     @JobScope
     public PrepaymentDataListItemReader prepaymentDataListItemReader(@Value("#{jobParameters['fileId']}") long fileId) {
 
-        return new PrepaymentDataListItemReader(deserializer, fileUploadService, fileId, fileUploadsProperties);
+        return new PrepaymentDataListItemReader(deserializer, fileUploadService, fileId, messageToken, fileUploadsProperties);
     }
 }
