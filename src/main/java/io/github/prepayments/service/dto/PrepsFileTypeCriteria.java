@@ -5,6 +5,7 @@ import java.util.Objects;
 import io.github.jhipster.service.Criteria;
 import io.github.prepayments.domain.enumeration.PrepsFileMediumTypes;
 import io.github.prepayments.domain.enumeration.PrepsFileModelType;
+import io.github.prepayments.domain.enumeration.PrepsFileDeleteProcessType;
 import io.github.jhipster.service.filter.BooleanFilter;
 import io.github.jhipster.service.filter.DoubleFilter;
 import io.github.jhipster.service.filter.Filter;
@@ -59,6 +60,24 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
         }
 
     }
+    /**
+     * Class for filtering PrepsFileDeleteProcessType
+     */
+    public static class PrepsFileDeleteProcessTypeFilter extends Filter<PrepsFileDeleteProcessType> {
+
+        public PrepsFileDeleteProcessTypeFilter() {
+        }
+
+        public PrepsFileDeleteProcessTypeFilter(PrepsFileDeleteProcessTypeFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public PrepsFileDeleteProcessTypeFilter copy() {
+            return new PrepsFileDeleteProcessTypeFilter(this);
+        }
+
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -72,6 +91,8 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
 
     private PrepsFileModelTypeFilter prepsfileType;
 
+    private PrepsFileDeleteProcessTypeFilter prepsfileDeleteProcessType;
+
     public PrepsFileTypeCriteria() {
     }
 
@@ -81,6 +102,7 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
         this.prepsFileMediumType = other.prepsFileMediumType == null ? null : other.prepsFileMediumType.copy();
         this.description = other.description == null ? null : other.description.copy();
         this.prepsfileType = other.prepsfileType == null ? null : other.prepsfileType.copy();
+        this.prepsfileDeleteProcessType = other.prepsfileDeleteProcessType == null ? null : other.prepsfileDeleteProcessType.copy();
     }
 
     @Override
@@ -128,6 +150,14 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
         this.prepsfileType = prepsfileType;
     }
 
+    public PrepsFileDeleteProcessTypeFilter getPrepsfileDeleteProcessType() {
+        return prepsfileDeleteProcessType;
+    }
+
+    public void setPrepsfileDeleteProcessType(PrepsFileDeleteProcessTypeFilter prepsfileDeleteProcessType) {
+        this.prepsfileDeleteProcessType = prepsfileDeleteProcessType;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -143,7 +173,8 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
             Objects.equals(prepsFileTypeName, that.prepsFileTypeName) &&
             Objects.equals(prepsFileMediumType, that.prepsFileMediumType) &&
             Objects.equals(description, that.description) &&
-            Objects.equals(prepsfileType, that.prepsfileType);
+            Objects.equals(prepsfileType, that.prepsfileType) &&
+            Objects.equals(prepsfileDeleteProcessType, that.prepsfileDeleteProcessType);
     }
 
     @Override
@@ -153,7 +184,8 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
         prepsFileTypeName,
         prepsFileMediumType,
         description,
-        prepsfileType
+        prepsfileType,
+        prepsfileDeleteProcessType
         );
     }
 
@@ -166,6 +198,7 @@ public class PrepsFileTypeCriteria implements Serializable, Criteria {
                 (prepsFileMediumType != null ? "prepsFileMediumType=" + prepsFileMediumType + ", " : "") +
                 (description != null ? "description=" + description + ", " : "") +
                 (prepsfileType != null ? "prepsfileType=" + prepsfileType + ", " : "") +
+                (prepsfileDeleteProcessType != null ? "prepsfileDeleteProcessType=" + prepsfileDeleteProcessType + ", " : "") +
             "}";
     }
 

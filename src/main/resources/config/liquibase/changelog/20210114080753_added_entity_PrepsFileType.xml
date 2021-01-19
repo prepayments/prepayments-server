@@ -33,6 +33,9 @@
             <column name="prepsfile_type" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="prepsfile_delete_process_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>
@@ -62,6 +65,7 @@
             <column name="file_template" type="blob"/>
             <column name="file_template_content_type" type="string"/>
             <column name="prepsfile_type" type="string"/>
+            <column name="prepsfile_delete_process_type" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

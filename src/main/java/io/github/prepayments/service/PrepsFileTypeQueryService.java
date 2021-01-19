@@ -101,6 +101,9 @@ public class PrepsFileTypeQueryService extends QueryService<PrepsFileType> {
             if (criteria.getPrepsfileType() != null) {
                 specification = specification.and(buildSpecification(criteria.getPrepsfileType(), PrepsFileType_.prepsfileType));
             }
+            if (criteria.getPrepsfileDeleteProcessType() != null) {
+                specification = specification.and(buildSpecification(criteria.getPrepsfileDeleteProcessType(), PrepsFileType_.prepsfileDeleteProcessType));
+            }
         }
         return specification;
     }

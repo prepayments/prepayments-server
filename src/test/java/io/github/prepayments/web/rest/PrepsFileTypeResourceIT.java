@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.github.prepayments.domain.enumeration.PrepsFileMediumTypes;
 import io.github.prepayments.domain.enumeration.PrepsFileModelType;
+import io.github.prepayments.domain.enumeration.PrepsFileDeleteProcessType;
 /**
  * Integration tests for the {@link PrepsFileTypeResource} REST controller.
  */
@@ -61,6 +62,9 @@ public class PrepsFileTypeResourceIT {
 
     private static final PrepsFileModelType DEFAULT_PREPSFILE_TYPE = PrepsFileModelType.CURRENCY_LIST;
     private static final PrepsFileModelType UPDATED_PREPSFILE_TYPE = PrepsFileModelType.PREPAYMENT_DATA;
+
+    private static final PrepsFileDeleteProcessType DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE = PrepsFileDeleteProcessType.DELETE_PREPAYMENT_DATA;
+    private static final PrepsFileDeleteProcessType UPDATED_PREPSFILE_DELETE_PROCESS_TYPE = PrepsFileDeleteProcessType.DELETE_PREPAYMENT_ENTRY;
 
     @Autowired
     private PrepsFileTypeRepository prepsFileTypeRepository;
@@ -100,7 +104,8 @@ public class PrepsFileTypeResourceIT {
             .description(DEFAULT_DESCRIPTION)
             .fileTemplate(DEFAULT_FILE_TEMPLATE)
             .fileTemplateContentType(DEFAULT_FILE_TEMPLATE_CONTENT_TYPE)
-            .prepsfileType(DEFAULT_PREPSFILE_TYPE);
+            .prepsfileType(DEFAULT_PREPSFILE_TYPE)
+            .prepsfileDeleteProcessType(DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE);
         return prepsFileType;
     }
     /**
@@ -116,7 +121,8 @@ public class PrepsFileTypeResourceIT {
             .description(UPDATED_DESCRIPTION)
             .fileTemplate(UPDATED_FILE_TEMPLATE)
             .fileTemplateContentType(UPDATED_FILE_TEMPLATE_CONTENT_TYPE)
-            .prepsfileType(UPDATED_PREPSFILE_TYPE);
+            .prepsfileType(UPDATED_PREPSFILE_TYPE)
+            .prepsfileDeleteProcessType(UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
         return prepsFileType;
     }
 
@@ -145,6 +151,7 @@ public class PrepsFileTypeResourceIT {
         assertThat(testPrepsFileType.getFileTemplate()).isEqualTo(DEFAULT_FILE_TEMPLATE);
         assertThat(testPrepsFileType.getFileTemplateContentType()).isEqualTo(DEFAULT_FILE_TEMPLATE_CONTENT_TYPE);
         assertThat(testPrepsFileType.getPrepsfileType()).isEqualTo(DEFAULT_PREPSFILE_TYPE);
+        assertThat(testPrepsFileType.getPrepsfileDeleteProcessType()).isEqualTo(DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE);
 
         // Validate the PrepsFileType in Elasticsearch
         verify(mockPrepsFileTypeSearchRepository, times(1)).save(testPrepsFileType);
@@ -227,7 +234,8 @@ public class PrepsFileTypeResourceIT {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].fileTemplateContentType").value(hasItem(DEFAULT_FILE_TEMPLATE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].fileTemplate").value(hasItem(Base64Utils.encodeToString(DEFAULT_FILE_TEMPLATE))))
-            .andExpect(jsonPath("$.[*].prepsfileType").value(hasItem(DEFAULT_PREPSFILE_TYPE.toString())));
+            .andExpect(jsonPath("$.[*].prepsfileType").value(hasItem(DEFAULT_PREPSFILE_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].prepsfileDeleteProcessType").value(hasItem(DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE.toString())));
     }
     
     @Test
@@ -246,7 +254,8 @@ public class PrepsFileTypeResourceIT {
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.fileTemplateContentType").value(DEFAULT_FILE_TEMPLATE_CONTENT_TYPE))
             .andExpect(jsonPath("$.fileTemplate").value(Base64Utils.encodeToString(DEFAULT_FILE_TEMPLATE)))
-            .andExpect(jsonPath("$.prepsfileType").value(DEFAULT_PREPSFILE_TYPE.toString()));
+            .andExpect(jsonPath("$.prepsfileType").value(DEFAULT_PREPSFILE_TYPE.toString()))
+            .andExpect(jsonPath("$.prepsfileDeleteProcessType").value(DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE.toString()));
     }
 
 
@@ -528,6 +537,58 @@ public class PrepsFileTypeResourceIT {
         // Get all the prepsFileTypeList where prepsfileType is null
         defaultPrepsFileTypeShouldNotBeFound("prepsfileType.specified=false");
     }
+
+    @Test
+    @Transactional
+    public void getAllPrepsFileTypesByPrepsfileDeleteProcessTypeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        prepsFileTypeRepository.saveAndFlush(prepsFileType);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType equals to DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE
+        defaultPrepsFileTypeShouldBeFound("prepsfileDeleteProcessType.equals=" + DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType equals to UPDATED_PREPSFILE_DELETE_PROCESS_TYPE
+        defaultPrepsFileTypeShouldNotBeFound("prepsfileDeleteProcessType.equals=" + UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepsFileTypesByPrepsfileDeleteProcessTypeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        prepsFileTypeRepository.saveAndFlush(prepsFileType);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType not equals to DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE
+        defaultPrepsFileTypeShouldNotBeFound("prepsfileDeleteProcessType.notEquals=" + DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType not equals to UPDATED_PREPSFILE_DELETE_PROCESS_TYPE
+        defaultPrepsFileTypeShouldBeFound("prepsfileDeleteProcessType.notEquals=" + UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepsFileTypesByPrepsfileDeleteProcessTypeIsInShouldWork() throws Exception {
+        // Initialize the database
+        prepsFileTypeRepository.saveAndFlush(prepsFileType);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType in DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE or UPDATED_PREPSFILE_DELETE_PROCESS_TYPE
+        defaultPrepsFileTypeShouldBeFound("prepsfileDeleteProcessType.in=" + DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE + "," + UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType equals to UPDATED_PREPSFILE_DELETE_PROCESS_TYPE
+        defaultPrepsFileTypeShouldNotBeFound("prepsfileDeleteProcessType.in=" + UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPrepsFileTypesByPrepsfileDeleteProcessTypeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        prepsFileTypeRepository.saveAndFlush(prepsFileType);
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType is not null
+        defaultPrepsFileTypeShouldBeFound("prepsfileDeleteProcessType.specified=true");
+
+        // Get all the prepsFileTypeList where prepsfileDeleteProcessType is null
+        defaultPrepsFileTypeShouldNotBeFound("prepsfileDeleteProcessType.specified=false");
+    }
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -541,7 +602,8 @@ public class PrepsFileTypeResourceIT {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].fileTemplateContentType").value(hasItem(DEFAULT_FILE_TEMPLATE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].fileTemplate").value(hasItem(Base64Utils.encodeToString(DEFAULT_FILE_TEMPLATE))))
-            .andExpect(jsonPath("$.[*].prepsfileType").value(hasItem(DEFAULT_PREPSFILE_TYPE.toString())));
+            .andExpect(jsonPath("$.[*].prepsfileType").value(hasItem(DEFAULT_PREPSFILE_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].prepsfileDeleteProcessType").value(hasItem(DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE.toString())));
 
         // Check, that the count call also returns 1
         restPrepsFileTypeMockMvc.perform(get("/api/preps-file-types/count?sort=id,desc&" + filter))
@@ -593,7 +655,8 @@ public class PrepsFileTypeResourceIT {
             .description(UPDATED_DESCRIPTION)
             .fileTemplate(UPDATED_FILE_TEMPLATE)
             .fileTemplateContentType(UPDATED_FILE_TEMPLATE_CONTENT_TYPE)
-            .prepsfileType(UPDATED_PREPSFILE_TYPE);
+            .prepsfileType(UPDATED_PREPSFILE_TYPE)
+            .prepsfileDeleteProcessType(UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
 
         restPrepsFileTypeMockMvc.perform(put("/api/preps-file-types")
             .contentType(MediaType.APPLICATION_JSON)
@@ -610,6 +673,7 @@ public class PrepsFileTypeResourceIT {
         assertThat(testPrepsFileType.getFileTemplate()).isEqualTo(UPDATED_FILE_TEMPLATE);
         assertThat(testPrepsFileType.getFileTemplateContentType()).isEqualTo(UPDATED_FILE_TEMPLATE_CONTENT_TYPE);
         assertThat(testPrepsFileType.getPrepsfileType()).isEqualTo(UPDATED_PREPSFILE_TYPE);
+        assertThat(testPrepsFileType.getPrepsfileDeleteProcessType()).isEqualTo(UPDATED_PREPSFILE_DELETE_PROCESS_TYPE);
 
         // Validate the PrepsFileType in Elasticsearch
         verify(mockPrepsFileTypeSearchRepository, times(2)).save(testPrepsFileType);
@@ -674,6 +738,7 @@ public class PrepsFileTypeResourceIT {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].fileTemplateContentType").value(hasItem(DEFAULT_FILE_TEMPLATE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].fileTemplate").value(hasItem(Base64Utils.encodeToString(DEFAULT_FILE_TEMPLATE))))
-            .andExpect(jsonPath("$.[*].prepsfileType").value(hasItem(DEFAULT_PREPSFILE_TYPE.toString())));
+            .andExpect(jsonPath("$.[*].prepsfileType").value(hasItem(DEFAULT_PREPSFILE_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].prepsfileDeleteProcessType").value(hasItem(DEFAULT_PREPSFILE_DELETE_PROCESS_TYPE.toString())));
     }
 }

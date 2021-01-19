@@ -7,38 +7,35 @@ import io.github.prepayments.service.PrepaymentDataService;
 import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.PrepaymentDataCriteria;
 import io.github.prepayments.service.dto.PrepaymentDataDTO;
+import io.github.prepayments.service.dto.PrepsFileUploadDTO;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This service deletes prepayments-data that has been updated with the file-upload of a given Id
  */
 @Service("prepaymentsDataDeletionService")
-public class PrepaymentsDataDeletionService implements HandlingService<Long> {
+public class PrepaymentsDataDeletionService implements HandlingService<PrepsFileUploadDTO> {
 
-    private final PrepsFileUploadService fileUploadService;
     private final PrepaymentDataService prepaymentDataService;
     private final PrepaymentDataQueryService prepaymentDataQueryService;
 
-    public PrepaymentsDataDeletionService(final PrepsFileUploadService fileUploadService, final PrepaymentDataService prepaymentDataService,
-                                          final PrepaymentDataQueryService prepaymentDataQueryService) {
-        this.fileUploadService = fileUploadService;
+    public PrepaymentsDataDeletionService(final PrepaymentDataService prepaymentDataService, final PrepaymentDataQueryService prepaymentDataQueryService) {
         this.prepaymentDataService = prepaymentDataService;
         this.prepaymentDataQueryService = prepaymentDataQueryService;
     }
 
     /**
      *
-     * @param payload The Id of the file-upload data to be deleted
+     * @param fileUpload file-upload containing data to be deleted
      */
     @Async
     @Override
-    public void handle(final Long payload) {
+    public void handle(final PrepsFileUploadDTO fileUpload) {
 
-        String uploadToken = fileUploadService.findOne(payload).get().getUploadToken();
+        String uploadToken = fileUpload.getUploadToken();
 
         PrepaymentDataCriteria deleteFileCriteria = new PrepaymentDataCriteria();
         StringFilter uploadTokenFilter = new StringFilter();

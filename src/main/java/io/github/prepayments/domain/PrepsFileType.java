@@ -13,6 +13,8 @@ import io.github.prepayments.domain.enumeration.PrepsFileMediumTypes;
 
 import io.github.prepayments.domain.enumeration.PrepsFileModelType;
 
+import io.github.prepayments.domain.enumeration.PrepsFileDeleteProcessType;
+
 /**
  * A PrepsFileType.
  */
@@ -51,6 +53,10 @@ public class PrepsFileType implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "prepsfile_type")
     private PrepsFileModelType prepsfileType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "prepsfile_delete_process_type")
+    private PrepsFileDeleteProcessType prepsfileDeleteProcessType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -138,6 +144,19 @@ public class PrepsFileType implements Serializable {
     public void setPrepsfileType(PrepsFileModelType prepsfileType) {
         this.prepsfileType = prepsfileType;
     }
+
+    public PrepsFileDeleteProcessType getPrepsfileDeleteProcessType() {
+        return prepsfileDeleteProcessType;
+    }
+
+    public PrepsFileType prepsfileDeleteProcessType(PrepsFileDeleteProcessType prepsfileDeleteProcessType) {
+        this.prepsfileDeleteProcessType = prepsfileDeleteProcessType;
+        return this;
+    }
+
+    public void setPrepsfileDeleteProcessType(PrepsFileDeleteProcessType prepsfileDeleteProcessType) {
+        this.prepsfileDeleteProcessType = prepsfileDeleteProcessType;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -167,6 +186,7 @@ public class PrepsFileType implements Serializable {
             ", fileTemplate='" + getFileTemplate() + "'" +
             ", fileTemplateContentType='" + getFileTemplateContentType() + "'" +
             ", prepsfileType='" + getPrepsfileType() + "'" +
+            ", prepsfileDeleteProcessType='" + getPrepsfileDeleteProcessType() + "'" +
             "}";
     }
 }

@@ -1,5 +1,6 @@
 package io.github.prepayments.internal.resource;
 
+import io.github.prepayments.internal.model.FileDeleteNotification;
 import io.github.prepayments.internal.model.FileNotification;
 import io.github.prepayments.internal.resource.decorator.IFileUploadResource;
 import io.github.prepayments.internal.service.HandlingService;
@@ -41,15 +42,18 @@ public class AppFileUploadResource implements IFileUploadResource {
     private final PrepsFileUploadService fileUploadService;
     private final IFileUploadResource fileUploadResource;
     private final HandlingService<FileNotification> fileNotificationHandlingService;
+    private final HandlingService<FileDeleteNotification> fileDeleteNotificationHandlingService;
     private final PrepsFileTypeService fileTypeService;
 
     public AppFileUploadResource(final IFileUploadResource fileUploadResourceDecorator, final HandlingService<FileNotification> fileNotificationHandlingService,
                                  final PrepsFileTypeService fileTypeService,
-                                 final PrepsFileUploadService fileUploadService) {
+                                 final PrepsFileUploadService fileUploadService,
+                                 final HandlingService<FileDeleteNotification> fileDeleteNotificationHandlingService) {
         this.fileUploadResource = fileUploadResourceDecorator;
         this.fileNotificationHandlingService = fileNotificationHandlingService;
         this.fileTypeService = fileTypeService;
         this.fileUploadService = fileUploadService;
+        this.fileDeleteNotificationHandlingService = fileDeleteNotificationHandlingService;
     }
 
     /**
@@ -149,14 +153,15 @@ public class AppFileUploadResource implements IFileUploadResource {
         PrepsFileType fileType = fileTypeService.findOne(fileUploadDTO.getPrepsFileTypeId())
                                                 .orElseThrow(() -> new NoSuchElementException("FileType of ID : " + fileUploadDTO.getPrepsFileTypeId()+ " not found"));
 
-        fileNotificationHandlingService.handle(FileNotification.builder()
-                                                               .filename(fileUploadDTO.getFileName())
-                                                               .description(fileUploadDTO.getDescription())
-                                                               // TODO apply file-deletion-type
-                                                               .prepsfileModelType(fileType.getPrepsfileType())
-                                                               .fileId(String.valueOf(id))
-                                                               .build()
+        // @formatter:off delete related information
+        fileDeleteNotificationHandlingService.handle(FileDeleteNotification.builder()
+                                                                     .filename(fileUploadDTO.getFileName())
+                                                                     .description(fileUploadDTO.getDescription())
+                                                                     .prepsfileDeleteProcessType(fileType.getPrepsfileDeleteProcessType())
+                                                                     .fileId(String.valueOf(id))
+                                                                     .build()
         );
+        // @formatter:on
 
         return fileUploadResource.deleteFileUpload(id);
     }

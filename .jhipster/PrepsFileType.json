@@ -29,7 +29,12 @@
     {
       "fieldName": "prepsfileType",
       "fieldType": "PrepsFileModelType",
-      "fieldValues": "CURRENCY_LIST,PREPAYMENT_DATA"
+      "fieldValues": "CURRENCY_LIST,PREPAYMENT_DATA, PREPAYMENT_ENTRY, AMORTIZATION_ENTRY"
+    },
+    {
+      "fieldName": "prepsfileDeleteProcessType",
+      "fieldType": "PrepsFileDeleteProcessType",
+      "fieldValues": "DELETE_PREPAYMENT_DATA, DELETE_PREPAYMENT_ENTRY, DELETE_AMORTIZATION_ENTRY"
     }
   ],
   "relationships": [],

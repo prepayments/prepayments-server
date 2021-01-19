@@ -77,6 +77,7 @@ class PrepsFileTypeGatlingTest extends Simulation {
                 , "description":"SAMPLE_TEXT"
                 , "fileTemplate":null
                 , "prepsfileType":"CURRENCY_LIST"
+                , "prepsfileDeleteProcessType":"DELETE_PREPAYMENT_DATA"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_prepsFileType_url"))).exitHereIfFailed

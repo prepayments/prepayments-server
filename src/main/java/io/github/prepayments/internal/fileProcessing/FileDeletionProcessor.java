@@ -1,10 +1,10 @@
 package io.github.prepayments.internal.fileProcessing;
 
 /**
- * Interface for a service that is used to delete file and file data
+ * Interface for a service that is used to delete file and related file data
  *
  */
-public interface FileDeletionProcessor<T> {
+public interface FileDeletionProcessor<F, T> {
 
-    T processFileDeletion(T payload);
+    T processFileDeletion(F fileUpload, T payload);
 }

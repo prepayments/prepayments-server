@@ -1,11 +1,11 @@
-id;preps_file_type_name;preps_file_medium_type;description;file_template;file_template_content_type;prepsfile_type
-1;Lead Chips;JSON;Ergonomic Wooden Cheese Gorgeous;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST
-2;Producer payment transmit;EXCEL;even-keeled Colorado;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-3;Human proactive Plastic;EXCEL_CSV;Auto Loan Account methodologies technologies;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST
-4;Soft;EXCEL;deposit Plastic;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-5;content;EXCEL_CSV;Plaza;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-6;extranet connecting info-mediaries;HTML5;navigate Money Market Account;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-7;calculating well-modulated Manager;EXCEL;Alabama Future;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-8;GB;POWERPOINT;compress Awesome Frozen Fish Bedfordshire;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-9;Mobility;JSON;green systematic revolutionize;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA
-10;Investor;TEXT;multimedia e-commerce vertical;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST
+id;preps_file_type_name;preps_file_medium_type;description;file_template;file_template_content_type;prepsfile_type;prepsfile_delete_process_type
+1;Lead Chips;JSON;Ergonomic Wooden Cheese Gorgeous;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST;DELETE_AMORTIZATION_ENTRY
+2;Credit Card Account lime;HTML5;bypass Optimization programming;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST;DELETE_AMORTIZATION_ENTRY
+3;partnerships reinvent;EXCEL_XLSB;Practical Metal Chair Plastic;../fake-data/blob/hipster.png;image/png;AMORTIZATION_ENTRY;DELETE_AMORTIZATION_ENTRY
+4;Creative;EXCEL_XML;B2C bricks-and-clicks;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA;DELETE_PREPAYMENT_DATA
+5;invoice maximize moratorium;EXCEL_XML;Internal port Strategist;../fake-data/blob/hipster.png;image/png;PREPAYMENT_DATA;DELETE_PREPAYMENT_ENTRY
+6;Outdoors Multi-tiered;EXCEL_XLSB;Rubber deposit Tools;../fake-data/blob/hipster.png;image/png;PREPAYMENT_ENTRY;DELETE_PREPAYMENT_ENTRY
+7;Applications Bedfordshire;JSON;green systematic revolutionize;../fake-data/blob/hipster.png;image/png;AMORTIZATION_ENTRY;DELETE_AMORTIZATION_ENTRY
+8;Pula Multi-layered;EXCEL_XLSB;e-commerce vertical;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST;DELETE_AMORTIZATION_ENTRY
+9;streamline;DOC;Course encryption markets;../fake-data/blob/hipster.png;image/png;PREPAYMENT_ENTRY;DELETE_PREPAYMENT_ENTRY
+10;overriding grey Identity;DOC;Auto Loan Account PCI;../fake-data/blob/hipster.png;image/png;CURRENCY_LIST;DELETE_AMORTIZATION_ENTRY
