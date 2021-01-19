@@ -1,13 +1,12 @@
 package io.github.prepayments.internal.service;
 
-import com.google.common.collect.ImmutableList;
 import io.github.jhipster.service.filter.StringFilter;
+import io.github.prepayments.domain.PrepaymentData;
+import io.github.prepayments.repository.PrepaymentDataRepository;
 import io.github.prepayments.service.PrepaymentDataQueryService;
-import io.github.prepayments.service.PrepaymentDataService;
-import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.PrepaymentDataCriteria;
-import io.github.prepayments.service.dto.PrepaymentDataDTO;
 import io.github.prepayments.service.dto.PrepsFileUploadDTO;
+import io.github.prepayments.service.mapper.PrepaymentDataMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +18,14 @@ import java.util.List;
 @Service("prepaymentsDataDeletionService")
 public class PrepaymentsDataDeletionService implements HandlingService<PrepsFileUploadDTO> {
 
-    private final PrepaymentDataService prepaymentDataService;
+    private final PrepaymentDataRepository prepaymentDataRepository;
+    private final PrepaymentDataMapper prepaymentDataMapper;
     private final PrepaymentDataQueryService prepaymentDataQueryService;
 
-    public PrepaymentsDataDeletionService(final PrepaymentDataService prepaymentDataService, final PrepaymentDataQueryService prepaymentDataQueryService) {
-        this.prepaymentDataService = prepaymentDataService;
+    public PrepaymentsDataDeletionService(final PrepaymentDataRepository prepaymentDataRepository, final PrepaymentDataMapper prepaymentDataMapper,
+                                          final PrepaymentDataQueryService prepaymentDataQueryService) {
+        this.prepaymentDataRepository = prepaymentDataRepository;
+        this.prepaymentDataMapper = prepaymentDataMapper;
         this.prepaymentDataQueryService = prepaymentDataQueryService;
     }
 
@@ -43,13 +45,9 @@ public class PrepaymentsDataDeletionService implements HandlingService<PrepsFile
         deleteFileCriteria.setUploadToken(uploadTokenFilter);
 
         // @formatter:off  fetch ids for deletion
-        List<Long> deletableIds = prepaymentDataQueryService.findByCriteria(deleteFileCriteria)
-                                                            .stream()
-                                                            .map(PrepaymentDataDTO::getId)
-                                                            .collect(ImmutableList.toImmutableList());
+        List<PrepaymentData> deletable = prepaymentDataMapper.toEntity(prepaymentDataQueryService.findByCriteria(deleteFileCriteria));
         // @formatter:on
 
-        // delete references
-        deletableIds.forEach(prepaymentDataService::delete);
+        prepaymentDataRepository.deleteAll(deletable);
     }
 }
