@@ -22,6 +22,7 @@
     <include file="config/liquibase/changelog/20210114080853_added_entity_PrepsFileUpload.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210114080953_added_entity_PrepsMessageToken.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210114081053_added_entity_CurrencyTable.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210120170509_added_entity_CompilationRequest.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

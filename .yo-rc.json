@@ -32,7 +32,8 @@
     "enableTranslation": false,
     "clientPackageManager": "npm",
     "blueprints": [],
-    "skipClient": true
+    "skipClient": true,
+    "lastLiquibaseTimestamp": 1611162309000
   },
   "generator-jhipster-file-handling": {
     "promptValues": {

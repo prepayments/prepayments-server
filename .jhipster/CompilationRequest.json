@@ -1,0 +1,38 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fileUploadId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "compilationStatus",
+      "fieldType": "CompilationStatus",
+      "fieldValues": "IN_PROGRESS,COMPLETE,FAILED"
+    },
+    {
+      "fieldName": "compilationType",
+      "fieldType": "CompilationType",
+      "fieldValues": "AMORTIZATION_ENTRY_COMPILATION,PREPAYMENT_ENTRY_COMPILATION"
+    },
+    {
+      "fieldName": "compilationToken",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20210120170509",
+  "dto": "mapstruct",
+  "searchEngine": "elasticsearch",
+  "service": "serviceImpl",
+  "entityTableName": "compilation_request",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": true,
+  "pagination": "pagination"
+}
