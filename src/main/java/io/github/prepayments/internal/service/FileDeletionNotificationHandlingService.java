@@ -28,6 +28,7 @@ public class FileDeletionNotificationHandlingService implements HandlingService<
         PrepsFileUploadDTO fileUploadDTO = fileUploadService.findOne(Long.valueOf(fileDeleteNotification.getFileId()))
                                                             .orElseThrow(() -> new IllegalArgumentException("File id : " + fileDeleteNotification.getFileId() + " could not be found"));
 
+        // TODO Add generics
         fileDeletionProcessorChain.apply(fileUploadDTO, fileDeleteNotification);
     }
 }

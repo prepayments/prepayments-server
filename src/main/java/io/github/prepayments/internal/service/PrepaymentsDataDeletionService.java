@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * This service deletes prepayments-data that has been updated with the file-upload of a given Id
  */
+// TODO To delete
 @Service("prepaymentsDataDeletionService")
 public class PrepaymentsDataDeletionService implements HandlingService<PrepsFileUploadDTO> {
 
