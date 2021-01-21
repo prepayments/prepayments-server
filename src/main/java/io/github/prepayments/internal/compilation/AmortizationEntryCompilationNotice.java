@@ -19,6 +19,8 @@ public class AmortizationEntryCompilationNotice {
 
     private long timestamp;
 
+    private long compilationRequestId;
+
     private String uploadToken;
 
     private String fileName;

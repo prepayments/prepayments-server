@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 import java.util.List;
 
-@Component("compilationRequestResourceDecorator")
+//@Component("compilationRequestResourceDecorator")
 public class CompilationRequestResourceDecorator implements ICompilationRequestResourceDecorator {
 
     private final CompilationRequestResource compilationRequestResource;
