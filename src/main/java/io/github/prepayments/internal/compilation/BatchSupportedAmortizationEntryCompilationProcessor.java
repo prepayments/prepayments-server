@@ -20,18 +20,18 @@ public class BatchSupportedAmortizationEntryCompilationProcessor
 
     private final JobLauncher jobLauncher;
     public final Job batchJob;
-    private final CompilationType amortizationEntryCompilationType;
+    private final CompilationType compilationType;
 
-    public BatchSupportedAmortizationEntryCompilationProcessor(final JobLauncher jobLauncher, final Job batchJob, final CompilationType amortizationEntryCompilationType) {
+    public BatchSupportedAmortizationEntryCompilationProcessor(final JobLauncher jobLauncher, final Job batchJob, final CompilationType compilationType) {
         this.jobLauncher = jobLauncher;
         this.batchJob = batchJob;
-        this.amortizationEntryCompilationType = amortizationEntryCompilationType;
+        this.compilationType = compilationType;
     }
 
     @Override
     public AmortizationEntryCompilationNotice compile(AmortizationEntryCompilationNotice notification) {
 
-        if (notification.getCompilationType() == amortizationEntryCompilationType) {
+        if (notification.getCompilationType() == compilationType) {
             log.debug("Compilation method confirmed for file Id: {}; message-token: {}; Compilation in startup...", notification.getFileId(), notification.getUploadToken());
 
             JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();

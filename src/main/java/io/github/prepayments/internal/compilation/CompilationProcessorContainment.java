@@ -16,21 +16,23 @@ public class CompilationProcessorContainment {
     @Autowired
     private JobLauncher jobLauncher;
 
+    // TODO Implement amortization-entry-compilation-job
     @Autowired
     @Qualifier("amortizationEntryCompilationJob")
     private Job amortizationEntryCompilationJob;
 
+    // TODO Implement amortization-entry-prepayment-compilation-job
     @Autowired
-    @Qualifier("amortizationEntryPrepaymentCompilationJob")
-    private Job amortizationEntryPrepaymentCompilationJob;
+    @Qualifier("prepaymentEntryCompilationJob")
+    private Job prepaymentEntryCompilationJob;
 
     @Bean
     public AmortizationEntryCompilationProcessorChain<AmortizationEntryCompilationNotice> amortizationEntryCompilationChain() {
 
         AmortizationEntryCompilationProcessorChain<AmortizationEntryCompilationNotice> theChain = new AmortizationEntryCompilationProcessorChain<>();
 
-        theChain.addProcessor(new BatchSupportedAmortizationEntryCompilationProcessor(jobLauncher, amortizationEntryCompilationJob, PREPAYMENT_ENTRY_COMPILATION));
-        theChain.addProcessor(new BatchSupportedAmortizationEntryCompilationProcessor(jobLauncher, amortizationEntryPrepaymentCompilationJob, AMORTIZATION_ENTRY_COMPILATION));
+        theChain.addProcessor(new BatchSupportedAmortizationEntryCompilationProcessor(jobLauncher, amortizationEntryCompilationJob, AMORTIZATION_ENTRY_COMPILATION));
+        theChain.addProcessor(new BatchSupportedAmortizationEntryCompilationProcessor(jobLauncher, prepaymentEntryCompilationJob, PREPAYMENT_ENTRY_COMPILATION));
 
         return theChain;
     }
