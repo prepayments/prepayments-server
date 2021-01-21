@@ -15,7 +15,11 @@ import java.util.List;
 @Service("prepaymentEntryCompilationDeserializer")
 public class PrepaymentEntryCompilationDeserializer implements PrepaymentDataCompilationDeserializer<PrepaymentEntryDTO> {
 
-    private Mapping<PrepaymentDataDTO, PrepaymentEntryDTO> prepaymentDataEntryDTOMapping;
+    private final Mapping<PrepaymentDataDTO, PrepaymentEntryDTO> prepaymentDataEntryDTOMapping;
+
+    public PrepaymentEntryCompilationDeserializer(final Mapping<PrepaymentDataDTO, PrepaymentEntryDTO> prepaymentDataEntryDTOMapping) {
+        this.prepaymentDataEntryDTOMapping = prepaymentDataEntryDTOMapping;
+    }
 
     @Override
     public List<PrepaymentEntryDTO> deserialize(final PrepaymentDataDTO prepaymentData) {
