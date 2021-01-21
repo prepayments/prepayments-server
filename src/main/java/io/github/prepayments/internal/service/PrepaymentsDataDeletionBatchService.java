@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This service deletes prepayments-data that has been updated with the file-upload of a given Id
@@ -48,8 +49,13 @@ public class PrepaymentsDataDeletionBatchService implements BatchService<Prepaym
      * @param entities
      */
     @Override
+    @Async
     public void index(final List<PrepaymentData> entities) {
 
-        prepaymentDataSearchRepository.deleteAll(entities);
+        prepaymentDataSearchRepository.deleteAll(
+            entities.stream()
+                .filter(entity -> prepaymentDataSearchRepository.existsById(entity.getId()))
+                .collect(Collectors.toList())
+        );
     }
 }
