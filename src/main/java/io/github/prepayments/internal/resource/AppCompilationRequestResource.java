@@ -53,23 +53,23 @@ public class AppCompilationRequestResource extends CompilationRequestResourceDec
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/compilation-requests")
-    public ResponseEntity<CompilationRequestDTO> createCompilationRequest(@RequestBody CompilationRequestDTO compilationRequestDTO) throws URISyntaxException {
+    public ResponseEntity<CompilationRequestDTO> createCompilationRequest(@RequestBody CompilationRequestDTO compilationRequestDTO) throws URISyntaxException, IllegalArgumentException {
         ResponseEntity<CompilationRequestDTO> response = super.createCompilationRequest(compilationRequestDTO);
 
-        PrepsFileUploadDTO fileUpload = fileUploadService.findOne(compilationRequestDTO.getFileUploadId()).orElseThrow(() -> {
-            throw new IllegalArgumentException("Could not find a file with the id : " + compilationRequestDTO.getFileUploadId());
+
+        fileUploadService.findOne(compilationRequestDTO.getFileUploadId()).ifPresent(foundIt -> {
+            compilationNoticeHandlingService.handle(AmortizationEntryCompilationNotice.builder()
+                                                                                      .fileId(compilationRequestDTO.getFileUploadId())
+                                                                                      .timestamp(System.currentTimeMillis())
+                                                                                      .fileName(foundIt.getFileName())
+                                                                                      .uploadToken(foundIt.getUploadToken())
+                                                                                      .compilationType(compilationRequestDTO.getCompilationType())
+                                                                                      .compilationRequestId(Objects.requireNonNull(response.getBody()).getId())
+                                                                                      .compilationStatus(CompilationStatus.IN_PROGRESS)
+                                                                                      .build());
         });
 
-        compilationNoticeHandlingService.handle(AmortizationEntryCompilationNotice.builder()
-                                                                                  .fileId(compilationRequestDTO.getFileUploadId())
-                                                                                  .timestamp(System.currentTimeMillis())
-                                                                                  .fileName(fileUpload.getFileName())
-                                                                                  .uploadToken(fileUpload.getUploadToken())
-                                                                                  .compilationType(compilationRequestDTO.getCompilationType())
-                                                                                  .compilationRequestId(Objects.requireNonNull(response.getBody()).getId())
-                                                                                  .compilationStatus(CompilationStatus.IN_PROGRESS)
-                                                                                  .build());
-        response.getBody().setCompilationStatus(CompilationStatus.IN_PROGRESS);
+        Objects.requireNonNull(response.getBody()).setCompilationStatus(CompilationStatus.IN_PROGRESS);
 
         return response;
     }
