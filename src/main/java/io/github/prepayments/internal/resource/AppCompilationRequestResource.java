@@ -1,5 +1,6 @@
 package io.github.prepayments.internal.resource;
 
+import io.github.prepayments.domain.enumeration.CompilationStatus;
 import io.github.prepayments.internal.compilation.AmortizationEntryCompilationNotice;
 import io.github.prepayments.internal.resource.decorator.CompilationRequestResourceDecorator;
 import io.github.prepayments.internal.resource.decorator.ICompilationRequestResourceDecorator;
@@ -65,7 +66,9 @@ public class AppCompilationRequestResource extends CompilationRequestResourceDec
                                                                                   .uploadToken(fileUpload.getUploadToken())
                                                                                   .compilationType(compilationRequestDTO.getCompilationType())
                                                                                   .compilationRequestId(Objects.requireNonNull(response.getBody()).getId())
+                                                                                  .compilationStatus(CompilationStatus.IN_PROGRESS)
                                                                                   .build());
+        response.getBody().setCompilationStatus(CompilationStatus.IN_PROGRESS);
 
         return response;
     }
