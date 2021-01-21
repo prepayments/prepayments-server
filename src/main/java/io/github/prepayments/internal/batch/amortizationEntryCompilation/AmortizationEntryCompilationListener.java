@@ -1,4 +1,4 @@
-package io.github.prepayments.internal.batch.prepaymentEntryCompilation;
+package io.github.prepayments.internal.batch.amortizationEntryCompilation;
 
 import io.github.prepayments.internal.service.CompilationJobTag;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Scope;
 
 @Slf4j
 @Scope("job")
-public class PrepaymentEntryCompilationListener implements JobExecutionListener {
-
+public class AmortizationEntryCompilationListener implements JobExecutionListener {
     private final long fileId;
     private final long startUpTime;
     private final String fileName;
@@ -18,7 +17,7 @@ public class PrepaymentEntryCompilationListener implements JobExecutionListener 
 
     private final CompilationJobTag compilationJobTag;
 
-    public PrepaymentEntryCompilationListener(final long fileId, final long startUpTime, final String fileName, final String messageToken, final long compilationRequestId,
+    public AmortizationEntryCompilationListener(final long fileId, final long startUpTime, final String fileName, final String messageToken, final long compilationRequestId,
                                               final CompilationJobTag compilationJobTag) {
         this.fileId = fileId;
         this.startUpTime = startUpTime;

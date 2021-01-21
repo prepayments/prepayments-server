@@ -16,12 +16,10 @@ public class CompilationProcessorContainment {
     @Autowired
     private JobLauncher jobLauncher;
 
-    // TODO Implement amortization-entry-compilation-job
     @Autowired
     @Qualifier("amortizationEntryCompilationJob")
     private Job amortizationEntryCompilationJob;
 
-    // TODO Implement amortization-entry-prepayment-compilation-job
     @Autowired
     @Qualifier("prepaymentEntryCompilationJob")
     private Job prepaymentEntryCompilationJob;
