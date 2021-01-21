@@ -2,13 +2,23 @@ package io.github.prepayments.internal.batch.prepaymentEntryCompilation;
 
 import com.google.common.collect.ImmutableList;
 import io.github.prepayments.config.FileUploadsProperties;
+import io.github.prepayments.domain.PrepaymentData;
 import io.github.prepayments.internal.Mapping;
+import io.github.prepayments.internal.batch.deletePrepaymentData.DeletePrepaymentDataItemProcessor;
+import io.github.prepayments.internal.batch.deletePrepaymentData.DeletePrepaymentDataItemReader;
+import io.github.prepayments.internal.batch.deletePrepaymentData.DeletePrepaymentDataItemWriter;
+import io.github.prepayments.internal.batch.deletePrepaymentData.PrepaymentsDataDeletionJobListener;
 import io.github.prepayments.internal.batch.prepaymentData.PrepaymentDataListItemReader;
 import io.github.prepayments.internal.excel.ExcelFileDeserializer;
 import io.github.prepayments.internal.model.PrepaymentDataEVM;
 import io.github.prepayments.internal.service.BatchService;
+import io.github.prepayments.internal.service.PrepaymentDataCompilationDeserializer;
+import io.github.prepayments.repository.PrepaymentDataRepository;
+import io.github.prepayments.service.PrepaymentDataQueryService;
 import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.PrepaymentDataDTO;
+import io.github.prepayments.service.dto.PrepaymentEntryDTO;
+import io.github.prepayments.service.mapper.PrepaymentDataMapper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -17,7 +27,10 @@ import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,82 +50,88 @@ public class PrepaymentEntryCompilationConfig {
     @Value("#{jobParameters['messageToken']}")
     private static String messageToken;
 
-    private final JobBuilderFactory jobBuilderFactory;
+    @Value("#{jobParameters['fileName']}")
+    private static String fileName;
 
-    private final StepBuilderFactory stepBuilderFactory;
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
 
-    private final ExcelFileDeserializer<PrepaymentDataEVM> deserializer;
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
 
-    private final PrepsFileUploadService fileUploadService;
+    @Autowired
+    @Qualifier("prepaymentDataQueryService")
+    private PrepaymentDataQueryService prepaymentDataQueryService;
 
-    private final FileUploadsProperties fileUploadsProperties;
+    @Autowired
+    private FileUploadsProperties fileUploadsProperties;
 
-    private final JobExecutionListener persistenceJobListener;
+    @Autowired
+    private PrepaymentDataMapper prepaymentDataMapper;
 
-    private final BatchService<PrepaymentDataDTO> batchService;
+    @Autowired
+    private PrepaymentDataRepository prepaymentDataRepository;
 
-    private final Mapping<PrepaymentDataEVM, PrepaymentDataDTO> mapping;
+    @Autowired
+    @Qualifier("prepaymentEntryCompilationDeserializer")
+    private PrepaymentDataCompilationDeserializer<PrepaymentEntryDTO> compilationDeserializer;
 
-    public PrepaymentDataBatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, ExcelFileDeserializer<PrepaymentDataEVM> deserializer,
-                                     PrepsFileUploadService fileUploadService, FileUploadsProperties fileUploadsProperties, JobExecutionListener persistenceJobListener,
-                                     BatchService<PrepaymentDataDTO> batchService, Mapping<PrepaymentDataEVM, PrepaymentDataDTO> mapping) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
-        this.deserializer = deserializer;
-        this.fileUploadService = fileUploadService;
-        this.fileUploadsProperties = fileUploadsProperties;
-        this.persistenceJobListener = persistenceJobListener;
-        this.batchService = batchService;
-        this.mapping = mapping;
+
+    @Bean
+    public ItemWriter<List<PrepaymentData>> deletePrepaymentDataItemWriter() {
+        return new DeletePrepaymentDataItemWriter(prepaymentDataRepository);
     }
 
-    @Bean("prepaymentDataListPersistenceJob")
-    public Job prepaymentDataListPersistenceJob() {
+    @Bean("prepaymentEntryCompilationProcessor")
+    public ItemProcessor<List<PrepaymentDataDTO>, List<PrepaymentEntryDTO>> prepaymentEntryCompilationProcessor() {
+        return new PrepaymentEntryCompilationProcessor(compilationDeserializer);
+    }
+
+    /**
+     * Configuration for prepayments-data-list item reader implemented with a list-partition object to break down whole data set into chunks
+     */
+    @Bean("prepaymentEntryCompilationReader")
+    @JobScope
+    public ItemReader<List<PrepaymentDataDTO>> prepaymentEntryCompilationReader(@Value("#{jobParameters['messageToken']}") String messageToken) {
+
+        return new PrepaymentEntryCompilationReader(messageToken, prepaymentDataQueryService, fileUploadsProperties);
+    }
+
+    @Bean
+    @JobScope
+    public PrepaymentsDataDeletionJobListener prepaymentsDataDeletionJobListener(@Value("#{jobParameters['fileId']}") long fileId,
+                                                                                 @Value("#{jobParameters['startUpTime']}") long startUpTime,
+                                                                                 @Value("#{jobParameters['messageToken']}") String messageToken,
+                                                                                 @Value("#{jobParameters['fileName']}") String fileName) {
+
+        return new PrepaymentsDataDeletionJobListener(fileId, startUpTime, fileName, messageToken);
+    }
+
+    @Bean("prepaymentDataDeletionJob")
+    public Job prepaymentDataDeletionJob() {
         // @formatter:off
-        return jobBuilderFactory.get("prepaymentDataListPersistenceJob")
+        return jobBuilderFactory.get("prepaymentDataDeletionJob")
             .preventRestart()
-            .listener(persistenceJobListener)
+            .listener(prepaymentsDataDeletionJobListener(fileId, startUpTime, fileName, messageToken))
             .incrementer(new RunIdIncrementer())
-            .flow(readPrepaymentDataListFromFile())
+            .flow(deletePrepaymentDataByToken())
             .end()
             .build();
         // @formatter:on
     }
 
-    @Bean
-    public ItemWriter<List<PrepaymentDataDTO>> prepaymentDataListItemWriter() {
-        return items -> items.stream().peek(batchService::save).forEach(batchService::index);
-    }
-
-    @Bean
-    public ItemProcessor<List<PrepaymentDataEVM>, List<PrepaymentDataDTO>> prepaymentDataListItemProcessor() {
-        return evms -> evms.stream().map(mapping::toValue2).collect(ImmutableList.toImmutableList());
-    }
-
     /**
      * Configuration of the step for reading prepayment-data-list from file
      */
-    @Bean("readPrepaymentDataListFromFile")
-    public Step readPrepaymentDataListFromFile() {
+    @Bean("deletePrepaymentDataByToken")
+    public Step deletePrepaymentDataByToken() {
         // @formatter:off
-        return stepBuilderFactory.get("readPrepaymentDataListFromFile")
-            .<List<PrepaymentDataEVM>, List<PrepaymentDataDTO>>chunk(2)
-            .reader(prepaymentDataListItemReader(fileId, messageToken))
-            .processor(prepaymentDataListItemProcessor())
-            .writer(prepaymentDataListItemWriter())
+        return stepBuilderFactory.get("deletePrepaymentDataByToken")
+            .<List<PrepaymentDataDTO>, List<PrepaymentEntryDTO>>chunk(2)
+            .reader(prepaymentEntryCompilationReader(messageToken))
+            .processor(prepaymentEntryCompilationProcessor())
+            .writer(deletePrepaymentDataItemWriter())
             .build();
         // @formatter:off
-    }
-
-    /**
-     * Configuration for prepayments-data-list item reader implemented with a list-partition object
-     * to break down whole data set into chunks
-     *
-     */
-    @Bean
-    @JobScope
-    public PrepaymentEntryCompilationReader prepaymentDataListItemReader(@Value("#{jobParameters['fileId']}") long fileId, @Value("#{jobParameters['messageToken']}") String messageToken) {
-
-        return new PrepaymentEntryCompilationReader(deserializer, fileUploadService, fileId, messageToken, fileUploadsProperties);
     }
 }
