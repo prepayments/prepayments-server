@@ -3,6 +3,7 @@ package io.github.prepayments.internal.batch.prepaymentEntryCompilation;
 import io.github.prepayments.config.FileUploadsProperties;
 import io.github.prepayments.internal.batch.deletePrepaymentData.PrepaymentsDataDeletionJobListener;
 import io.github.prepayments.internal.service.BatchService;
+import io.github.prepayments.internal.service.CompilationJobTag;
 import io.github.prepayments.internal.service.PrepaymentDataCompilationDeserializer;
 import io.github.prepayments.repository.PrepaymentDataRepository;
 import io.github.prepayments.service.PrepaymentDataQueryService;
@@ -41,6 +42,12 @@ public class PrepaymentEntryCompilationConfig {
 
     @Value("#{jobParameters['fileName']}")
     private static String fileName;
+
+    @Value("#{jobParameters['compilationRequestId']}")
+    private static long compilationRequestId;
+
+    @Autowired
+    private CompilationJobTag compilationJobTag;
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -94,9 +101,10 @@ public class PrepaymentEntryCompilationConfig {
     @JobScope
     public PrepaymentEntryCompilationListener prepaymentEntryCompilationListener(@Value("#{jobParameters['fileId']}") long fileId, @Value("#{jobParameters['startUpTime']}") long startUpTime,
                                                                                  @Value("#{jobParameters['messageToken']}") String messageToken,
-                                                                                 @Value("#{jobParameters['fileName']}") String fileName) {
+                                                                                 @Value("#{jobParameters['fileName']}") String fileName,
+                                                                                 @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, messageToken);
+        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, messageToken, compilationRequestId, compilationJobTag);
     }
 
     @Bean("prepaymentEntryCompilationJob")
@@ -104,7 +112,7 @@ public class PrepaymentEntryCompilationConfig {
         // @formatter:off
         return jobBuilderFactory.get("prepaymentEntryCompilationJob")
             .preventRestart()
-            .listener(prepaymentEntryCompilationListener(fileId, startUpTime, fileName, messageToken))
+            .listener(prepaymentEntryCompilationListener(fileId, startUpTime, fileName, messageToken, compilationRequestId))
             .incrementer(new RunIdIncrementer())
             .flow(prepaymentEntryCompilationStep())
             .end()
