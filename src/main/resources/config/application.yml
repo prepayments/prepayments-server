@@ -169,3 +169,4 @@ jhipster:
 # ===================================================================
 
 # application:
+AMORTIZATION_DATE: ${AMORTIZATION_DATE}
