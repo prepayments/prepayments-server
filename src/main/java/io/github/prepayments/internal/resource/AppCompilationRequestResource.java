@@ -5,6 +5,7 @@ import io.github.prepayments.internal.compilation.AmortizationEntryCompilationNo
 import io.github.prepayments.internal.resource.decorator.CompilationRequestResourceDecorator;
 import io.github.prepayments.internal.resource.decorator.ICompilationRequestResourceDecorator;
 import io.github.prepayments.internal.service.AmortizationEntryCompilationNoticeHandlingService;
+import io.github.prepayments.internal.service.HandlingService;
 import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.CompilationRequestCriteria;
 import io.github.prepayments.service.dto.CompilationRequestDTO;
@@ -31,12 +32,12 @@ import java.util.Objects;
 @RequestMapping("/api/app")
 public class AppCompilationRequestResource extends CompilationRequestResourceDecorator implements ICompilationRequestResourceDecorator {
 
-    private final AmortizationEntryCompilationNoticeHandlingService compilationNoticeHandlingService;
+    private final HandlingService<AmortizationEntryCompilationNotice> compilationNoticeHandlingService;
 
     private final PrepsFileUploadService fileUploadService;
 
     public AppCompilationRequestResource(final CompilationRequestResource compilationRequestResource,
-                                         final @Qualifier("amortizationEntryCompilationNoticeHandlingService") AmortizationEntryCompilationNoticeHandlingService compilationNoticeHandlingService,
+                                         final @Qualifier("amortizationEntryCompilationNoticeHandlingService") HandlingService<AmortizationEntryCompilationNotice> compilationNoticeHandlingService,
                                          final PrepsFileUploadService fileUploadService) {
         super(compilationRequestResource);
         this.compilationNoticeHandlingService = compilationNoticeHandlingService;
