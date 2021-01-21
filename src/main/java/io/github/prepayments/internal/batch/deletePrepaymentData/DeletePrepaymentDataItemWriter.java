@@ -1,9 +1,11 @@
 package io.github.prepayments.internal.batch.deletePrepaymentData;
 
+import com.google.common.collect.ImmutableList;
 import io.github.prepayments.domain.PrepaymentData;
-import io.github.prepayments.repository.PrepaymentDataRepository;
+import io.github.prepayments.internal.service.BatchService;
 import org.springframework.batch.item.ItemWriter;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,15 +13,17 @@ import java.util.List;
  */
 public class DeletePrepaymentDataItemWriter implements ItemWriter<List<PrepaymentData>> {
 
-    private final PrepaymentDataRepository prepaymentDataRepository;
+    private final BatchService<PrepaymentData> prepaymentsDataDeletionBatchService;
 
-    public DeletePrepaymentDataItemWriter(final PrepaymentDataRepository prepaymentDataRepository) {
-        this.prepaymentDataRepository = prepaymentDataRepository;
+    public DeletePrepaymentDataItemWriter(final BatchService<PrepaymentData> prepaymentsDataDeletionBatchService) {
+        this.prepaymentsDataDeletionBatchService = prepaymentsDataDeletionBatchService;
     }
 
     @Override
     public void write(final List<? extends List<PrepaymentData>> deletable) throws Exception {
 
-        deletable.forEach(prepaymentDataRepository::deleteAll);
+        prepaymentsDataDeletionBatchService.save(deletable.stream().flatMap(Collection::stream).collect(ImmutableList.toImmutableList()));
+
+        prepaymentsDataDeletionBatchService.index(deletable.stream().flatMap(Collection::stream).collect(ImmutableList.toImmutableList()));
     }
 }

@@ -2,6 +2,7 @@ package io.github.prepayments.internal.batch.deletePrepaymentData;
 
 import io.github.prepayments.config.FileUploadsProperties;
 import io.github.prepayments.domain.PrepaymentData;
+import io.github.prepayments.internal.service.BatchService;
 import io.github.prepayments.repository.PrepaymentDataRepository;
 import io.github.prepayments.service.PrepaymentDataQueryService;
 import io.github.prepayments.service.dto.PrepaymentDataDTO;
@@ -60,10 +61,14 @@ public class DeletePrepaymentDataBatchConfig {
     @Autowired
     private PrepaymentDataRepository prepaymentDataRepository;
 
+    @Autowired
+    @Qualifier("prepaymentsDataDeletionBatchService")
+    private BatchService<PrepaymentData> prepaymentsDataDeletionBatchService;
+
 
     @Bean
     public ItemWriter<List<PrepaymentData>> deletePrepaymentDataItemWriter() {
-        return new DeletePrepaymentDataItemWriter(prepaymentDataRepository);
+        return new DeletePrepaymentDataItemWriter(prepaymentsDataDeletionBatchService);
     }
 
     @Bean
