@@ -26,7 +26,7 @@ import org.springframework.core.env.Profiles;
 import javax.annotation.PreDestroy;
 
 @Configuration
-@EnableCaching
+@EnableCaching(proxyTargetClass=true)
 public class CacheConfiguration {
     private GitProperties gitProperties;
     private BuildProperties buildProperties;
