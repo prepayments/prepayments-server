@@ -1,5 +1,7 @@
 package io.github.prepayments.internal.compilation;
 
+import io.github.prepayments.domain.enumeration.CompilationStatus;
+import io.github.prepayments.domain.enumeration.CompilationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +23,7 @@ public class AmortizationEntryCompilationNotice {
 
     private String fileName;
 
-    private AmortizationEntryCompilationType amortizationEntryCompilationType;
+    private CompilationType compilationType;
 
-    private CompilationStatus compilationStatus = CompilationStatus.UN_DEFINED;
+    private CompilationStatus compilationStatus;
 }

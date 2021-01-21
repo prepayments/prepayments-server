@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static io.github.prepayments.internal.compilation.AmortizationEntryCompilationType.AMORTIZATION_ENTRY_COMPILATION;
-import static io.github.prepayments.internal.compilation.AmortizationEntryCompilationType.PREPAYMENT_ENTRY_COMPILATION;
+import static io.github.prepayments.domain.enumeration.CompilationType.AMORTIZATION_ENTRY_COMPILATION;
+import static io.github.prepayments.domain.enumeration.CompilationType.PREPAYMENT_ENTRY_COMPILATION;
 
 @Configuration
 public class CompilationProcessorContainment {

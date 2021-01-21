@@ -1,8 +1,8 @@
 package io.github.prepayments.internal.service;
 
+import io.github.prepayments.domain.enumeration.CompilationStatus;
 import io.github.prepayments.internal.compilation.AmortizationEntryCompilationNotice;
 import io.github.prepayments.internal.compilation.AmortizationEntryCompilationProcessorChain;
-import io.github.prepayments.internal.compilation.CompilationStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class AmortizationEntryCompilationNoticeHandlingService implements Handli
     @Override
     public void handle(final AmortizationEntryCompilationNotice payload) {
 
-        payload.setCompilationStatus(CompilationStatus.STARTING);
+        payload.setCompilationStatus(CompilationStatus.IN_PROGRESS);
 
         this.amortizationEntryCompilationChain.apply(payload);
     }
