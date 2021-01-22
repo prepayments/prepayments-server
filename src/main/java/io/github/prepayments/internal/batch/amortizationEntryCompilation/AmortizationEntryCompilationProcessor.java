@@ -7,8 +7,10 @@ import org.springframework.batch.item.ItemProcessor;
 
 import java.util.List;
 
-public class AmortizationEntryCompilationProcessor
-    implements ItemProcessor<List<PrepaymentDataDTO>, List<AmortizationEntryDTO>> {
+/**
+ * This processor takes prepayment-data DTO and translates that into constituent amortization-entries
+ */
+public class AmortizationEntryCompilationProcessor implements ItemProcessor<List<PrepaymentDataDTO>, List<AmortizationEntryDTO>> {
 
     private final AmortizationDataMappingService<PrepaymentDataDTO, AmortizationEntryDTO> amortizationDataMappingService;
 

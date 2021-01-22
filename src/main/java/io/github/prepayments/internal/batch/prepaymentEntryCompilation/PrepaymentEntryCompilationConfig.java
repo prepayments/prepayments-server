@@ -30,7 +30,6 @@ import java.util.List;
 @Configuration
 public class PrepaymentEntryCompilationConfig {
 
-
     @Value("#{jobParameters['fileId']}")
     private static long fileId;
 

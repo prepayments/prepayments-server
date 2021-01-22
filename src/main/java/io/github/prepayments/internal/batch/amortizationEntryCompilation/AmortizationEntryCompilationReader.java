@@ -17,6 +17,10 @@ import org.springframework.context.annotation.Scope;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+/**
+ * This reader will take the message token which we know is the file-upload token when the prepayment-data is itself created from
+ * an uploaded file, to look for the relevant prepayment-data entries so they can be forwarded into the batch process
+ */
 @Slf4j
 @Scope("job")
 public class AmortizationEntryCompilationReader implements ItemReader<List<PrepaymentDataDTO>> {
