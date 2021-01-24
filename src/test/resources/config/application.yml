@@ -123,3 +123,5 @@ jhipster:
 # ===================================================================
 
 # application:
+AMORTIZATION_DATE: 25
+LARGE_UPLOADS_SIZE: 2000
