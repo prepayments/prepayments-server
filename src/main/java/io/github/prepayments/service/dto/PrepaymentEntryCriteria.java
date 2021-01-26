@@ -42,6 +42,10 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
 
     private StringFilter uploadToken;
 
+    private LongFilter prepaymentDataId;
+
+    private StringFilter compilationToken;
+
     public PrepaymentEntryCriteria() {
     }
 
@@ -54,6 +58,8 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
         this.prepaymentDate = other.prepaymentDate == null ? null : other.prepaymentDate.copy();
         this.transactionAmount = other.transactionAmount == null ? null : other.transactionAmount.copy();
         this.uploadToken = other.uploadToken == null ? null : other.uploadToken.copy();
+        this.prepaymentDataId = other.prepaymentDataId == null ? null : other.prepaymentDataId.copy();
+        this.compilationToken = other.compilationToken == null ? null : other.compilationToken.copy();
     }
 
     @Override
@@ -125,6 +131,22 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
         this.uploadToken = uploadToken;
     }
 
+    public LongFilter getPrepaymentDataId() {
+        return prepaymentDataId;
+    }
+
+    public void setPrepaymentDataId(LongFilter prepaymentDataId) {
+        this.prepaymentDataId = prepaymentDataId;
+    }
+
+    public StringFilter getCompilationToken() {
+        return compilationToken;
+    }
+
+    public void setCompilationToken(StringFilter compilationToken) {
+        this.compilationToken = compilationToken;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -143,7 +165,9 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
             Objects.equals(prepaymentNumber, that.prepaymentNumber) &&
             Objects.equals(prepaymentDate, that.prepaymentDate) &&
             Objects.equals(transactionAmount, that.transactionAmount) &&
-            Objects.equals(uploadToken, that.uploadToken);
+            Objects.equals(uploadToken, that.uploadToken) &&
+            Objects.equals(prepaymentDataId, that.prepaymentDataId) &&
+            Objects.equals(compilationToken, that.compilationToken);
     }
 
     @Override
@@ -156,7 +180,9 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
         prepaymentNumber,
         prepaymentDate,
         transactionAmount,
-        uploadToken
+        uploadToken,
+        prepaymentDataId,
+        compilationToken
         );
     }
 
@@ -172,6 +198,8 @@ public class PrepaymentEntryCriteria implements Serializable, Criteria {
                 (prepaymentDate != null ? "prepaymentDate=" + prepaymentDate + ", " : "") +
                 (transactionAmount != null ? "transactionAmount=" + transactionAmount + ", " : "") +
                 (uploadToken != null ? "uploadToken=" + uploadToken + ", " : "") +
+                (prepaymentDataId != null ? "prepaymentDataId=" + prepaymentDataId + ", " : "") +
+                (compilationToken != null ? "compilationToken=" + compilationToken + ", " : "") +
             "}";
     }
 

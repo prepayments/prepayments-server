@@ -79,6 +79,8 @@ class PrepaymentEntryGatlingTest extends Simulation {
                 , "prepaymentDate":"2020-01-01T00:00:00.000Z"
                 , "transactionAmount":"0"
                 , "uploadToken":"SAMPLE_TEXT"
+                , "prepaymentDataId":null
+                , "compilationToken":"SAMPLE_TEXT"
                 }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_prepaymentEntry_url"))).exitHereIfFailed

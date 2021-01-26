@@ -25,6 +25,10 @@ public class PrepaymentEntryDTO implements Serializable {
 
     private String uploadToken;
 
+    private Long prepaymentDataId;
+
+    private String compilationToken;
+
     
     public Long getId() {
         return id;
@@ -90,6 +94,22 @@ public class PrepaymentEntryDTO implements Serializable {
         this.uploadToken = uploadToken;
     }
 
+    public Long getPrepaymentDataId() {
+        return prepaymentDataId;
+    }
+
+    public void setPrepaymentDataId(Long prepaymentDataId) {
+        this.prepaymentDataId = prepaymentDataId;
+    }
+
+    public String getCompilationToken() {
+        return compilationToken;
+    }
+
+    public void setCompilationToken(String compilationToken) {
+        this.compilationToken = compilationToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -119,6 +139,8 @@ public class PrepaymentEntryDTO implements Serializable {
             ", prepaymentDate='" + getPrepaymentDate() + "'" +
             ", transactionAmount=" + getTransactionAmount() +
             ", uploadToken='" + getUploadToken() + "'" +
+            ", prepaymentDataId=" + getPrepaymentDataId() +
+            ", compilationToken='" + getCompilationToken() + "'" +
             "}";
     }
 }
