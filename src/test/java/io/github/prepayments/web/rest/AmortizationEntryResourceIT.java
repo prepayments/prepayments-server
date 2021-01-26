@@ -77,6 +77,13 @@ public class AmortizationEntryResourceIT {
     private static final String DEFAULT_UPLOAD_TOKEN = "AAAAAAAAAA";
     private static final String UPDATED_UPLOAD_TOKEN = "BBBBBBBBBB";
 
+    private static final Long DEFAULT_PREPAYMENT_DATA_ID = 1L;
+    private static final Long UPDATED_PREPAYMENT_DATA_ID = 2L;
+    private static final Long SMALLER_PREPAYMENT_DATA_ID = 1L - 1L;
+
+    private static final String DEFAULT_COMPILATION_TOKEN = "AAAAAAAAAA";
+    private static final String UPDATED_COMPILATION_TOKEN = "BBBBBBBBBB";
+
     @Autowired
     private AmortizationEntryRepository amortizationEntryRepository;
 
@@ -121,7 +128,9 @@ public class AmortizationEntryResourceIT {
             .prepaymentDate(DEFAULT_PREPAYMENT_DATE)
             .transactionAmount(DEFAULT_TRANSACTION_AMOUNT)
             .amortizationDate(DEFAULT_AMORTIZATION_DATE)
-            .uploadToken(DEFAULT_UPLOAD_TOKEN);
+            .uploadToken(DEFAULT_UPLOAD_TOKEN)
+            .prepaymentDataId(DEFAULT_PREPAYMENT_DATA_ID)
+            .compilationToken(DEFAULT_COMPILATION_TOKEN);
         return amortizationEntry;
     }
     /**
@@ -140,7 +149,9 @@ public class AmortizationEntryResourceIT {
             .prepaymentDate(UPDATED_PREPAYMENT_DATE)
             .transactionAmount(UPDATED_TRANSACTION_AMOUNT)
             .amortizationDate(UPDATED_AMORTIZATION_DATE)
-            .uploadToken(UPDATED_UPLOAD_TOKEN);
+            .uploadToken(UPDATED_UPLOAD_TOKEN)
+            .prepaymentDataId(UPDATED_PREPAYMENT_DATA_ID)
+            .compilationToken(UPDATED_COMPILATION_TOKEN);
         return amortizationEntry;
     }
 
@@ -173,6 +184,8 @@ public class AmortizationEntryResourceIT {
         assertThat(testAmortizationEntry.getTransactionAmount()).isEqualTo(DEFAULT_TRANSACTION_AMOUNT);
         assertThat(testAmortizationEntry.getAmortizationDate()).isEqualTo(DEFAULT_AMORTIZATION_DATE);
         assertThat(testAmortizationEntry.getUploadToken()).isEqualTo(DEFAULT_UPLOAD_TOKEN);
+        assertThat(testAmortizationEntry.getPrepaymentDataId()).isEqualTo(DEFAULT_PREPAYMENT_DATA_ID);
+        assertThat(testAmortizationEntry.getCompilationToken()).isEqualTo(DEFAULT_COMPILATION_TOKEN);
 
         // Validate the AmortizationEntry in Elasticsearch
         verify(mockAmortizationEntrySearchRepository, times(1)).save(testAmortizationEntry);
@@ -221,7 +234,9 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())))
-            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)))
+            .andExpect(jsonPath("$.[*].prepaymentDataId").value(hasItem(DEFAULT_PREPAYMENT_DATA_ID.intValue())))
+            .andExpect(jsonPath("$.[*].compilationToken").value(hasItem(DEFAULT_COMPILATION_TOKEN)));
     }
     
     @Test
@@ -243,7 +258,9 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.prepaymentDate").value(DEFAULT_PREPAYMENT_DATE.toString()))
             .andExpect(jsonPath("$.transactionAmount").value(DEFAULT_TRANSACTION_AMOUNT.intValue()))
             .andExpect(jsonPath("$.amortizationDate").value(DEFAULT_AMORTIZATION_DATE.toString()))
-            .andExpect(jsonPath("$.uploadToken").value(DEFAULT_UPLOAD_TOKEN));
+            .andExpect(jsonPath("$.uploadToken").value(DEFAULT_UPLOAD_TOKEN))
+            .andExpect(jsonPath("$.prepaymentDataId").value(DEFAULT_PREPAYMENT_DATA_ID.intValue()))
+            .andExpect(jsonPath("$.compilationToken").value(DEFAULT_COMPILATION_TOKEN));
     }
 
 
@@ -1048,6 +1065,189 @@ public class AmortizationEntryResourceIT {
         defaultAmortizationEntryShouldBeFound("uploadToken.doesNotContain=" + UPDATED_UPLOAD_TOKEN);
     }
 
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId equals to DEFAULT_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.equals=" + DEFAULT_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId equals to UPDATED_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.equals=" + UPDATED_PREPAYMENT_DATA_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId not equals to DEFAULT_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.notEquals=" + DEFAULT_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId not equals to UPDATED_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.notEquals=" + UPDATED_PREPAYMENT_DATA_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsInShouldWork() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId in DEFAULT_PREPAYMENT_DATA_ID or UPDATED_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.in=" + DEFAULT_PREPAYMENT_DATA_ID + "," + UPDATED_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId equals to UPDATED_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.in=" + UPDATED_PREPAYMENT_DATA_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId is not null
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.specified=true");
+
+        // Get all the amortizationEntryList where prepaymentDataId is null
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId is greater than or equal to DEFAULT_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.greaterThanOrEqual=" + DEFAULT_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId is greater than or equal to UPDATED_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.greaterThanOrEqual=" + UPDATED_PREPAYMENT_DATA_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId is less than or equal to DEFAULT_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.lessThanOrEqual=" + DEFAULT_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId is less than or equal to SMALLER_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.lessThanOrEqual=" + SMALLER_PREPAYMENT_DATA_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsLessThanSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId is less than DEFAULT_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.lessThan=" + DEFAULT_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId is less than UPDATED_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.lessThan=" + UPDATED_PREPAYMENT_DATA_ID);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByPrepaymentDataIdIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where prepaymentDataId is greater than DEFAULT_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldNotBeFound("prepaymentDataId.greaterThan=" + DEFAULT_PREPAYMENT_DATA_ID);
+
+        // Get all the amortizationEntryList where prepaymentDataId is greater than SMALLER_PREPAYMENT_DATA_ID
+        defaultAmortizationEntryShouldBeFound("prepaymentDataId.greaterThan=" + SMALLER_PREPAYMENT_DATA_ID);
+    }
+
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByCompilationTokenIsEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where compilationToken equals to DEFAULT_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldBeFound("compilationToken.equals=" + DEFAULT_COMPILATION_TOKEN);
+
+        // Get all the amortizationEntryList where compilationToken equals to UPDATED_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("compilationToken.equals=" + UPDATED_COMPILATION_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByCompilationTokenIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where compilationToken not equals to DEFAULT_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("compilationToken.notEquals=" + DEFAULT_COMPILATION_TOKEN);
+
+        // Get all the amortizationEntryList where compilationToken not equals to UPDATED_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldBeFound("compilationToken.notEquals=" + UPDATED_COMPILATION_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByCompilationTokenIsInShouldWork() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where compilationToken in DEFAULT_COMPILATION_TOKEN or UPDATED_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldBeFound("compilationToken.in=" + DEFAULT_COMPILATION_TOKEN + "," + UPDATED_COMPILATION_TOKEN);
+
+        // Get all the amortizationEntryList where compilationToken equals to UPDATED_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("compilationToken.in=" + UPDATED_COMPILATION_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByCompilationTokenIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where compilationToken is not null
+        defaultAmortizationEntryShouldBeFound("compilationToken.specified=true");
+
+        // Get all the amortizationEntryList where compilationToken is null
+        defaultAmortizationEntryShouldNotBeFound("compilationToken.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllAmortizationEntriesByCompilationTokenContainsSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where compilationToken contains DEFAULT_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldBeFound("compilationToken.contains=" + DEFAULT_COMPILATION_TOKEN);
+
+        // Get all the amortizationEntryList where compilationToken contains UPDATED_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("compilationToken.contains=" + UPDATED_COMPILATION_TOKEN);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAmortizationEntriesByCompilationTokenNotContainsSomething() throws Exception {
+        // Initialize the database
+        amortizationEntryRepository.saveAndFlush(amortizationEntry);
+
+        // Get all the amortizationEntryList where compilationToken does not contain DEFAULT_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldNotBeFound("compilationToken.doesNotContain=" + DEFAULT_COMPILATION_TOKEN);
+
+        // Get all the amortizationEntryList where compilationToken does not contain UPDATED_COMPILATION_TOKEN
+        defaultAmortizationEntryShouldBeFound("compilationToken.doesNotContain=" + UPDATED_COMPILATION_TOKEN);
+    }
+
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -1064,7 +1264,9 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())))
-            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)))
+            .andExpect(jsonPath("$.[*].prepaymentDataId").value(hasItem(DEFAULT_PREPAYMENT_DATA_ID.intValue())))
+            .andExpect(jsonPath("$.[*].compilationToken").value(hasItem(DEFAULT_COMPILATION_TOKEN)));
 
         // Check, that the count call also returns 1
         restAmortizationEntryMockMvc.perform(get("/api/amortization-entries/count?sort=id,desc&" + filter))
@@ -1119,7 +1321,9 @@ public class AmortizationEntryResourceIT {
             .prepaymentDate(UPDATED_PREPAYMENT_DATE)
             .transactionAmount(UPDATED_TRANSACTION_AMOUNT)
             .amortizationDate(UPDATED_AMORTIZATION_DATE)
-            .uploadToken(UPDATED_UPLOAD_TOKEN);
+            .uploadToken(UPDATED_UPLOAD_TOKEN)
+            .prepaymentDataId(UPDATED_PREPAYMENT_DATA_ID)
+            .compilationToken(UPDATED_COMPILATION_TOKEN);
         AmortizationEntryDTO amortizationEntryDTO = amortizationEntryMapper.toDto(updatedAmortizationEntry);
 
         restAmortizationEntryMockMvc.perform(put("/api/amortization-entries")
@@ -1140,6 +1344,8 @@ public class AmortizationEntryResourceIT {
         assertThat(testAmortizationEntry.getTransactionAmount()).isEqualTo(UPDATED_TRANSACTION_AMOUNT);
         assertThat(testAmortizationEntry.getAmortizationDate()).isEqualTo(UPDATED_AMORTIZATION_DATE);
         assertThat(testAmortizationEntry.getUploadToken()).isEqualTo(UPDATED_UPLOAD_TOKEN);
+        assertThat(testAmortizationEntry.getPrepaymentDataId()).isEqualTo(UPDATED_PREPAYMENT_DATA_ID);
+        assertThat(testAmortizationEntry.getCompilationToken()).isEqualTo(UPDATED_COMPILATION_TOKEN);
 
         // Validate the AmortizationEntry in Elasticsearch
         verify(mockAmortizationEntrySearchRepository, times(1)).save(testAmortizationEntry);
@@ -1210,6 +1416,8 @@ public class AmortizationEntryResourceIT {
             .andExpect(jsonPath("$.[*].prepaymentDate").value(hasItem(DEFAULT_PREPAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].transactionAmount").value(hasItem(DEFAULT_TRANSACTION_AMOUNT.intValue())))
             .andExpect(jsonPath("$.[*].amortizationDate").value(hasItem(DEFAULT_AMORTIZATION_DATE.toString())))
-            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)));
+            .andExpect(jsonPath("$.[*].uploadToken").value(hasItem(DEFAULT_UPLOAD_TOKEN)))
+            .andExpect(jsonPath("$.[*].prepaymentDataId").value(hasItem(DEFAULT_PREPAYMENT_DATA_ID.intValue())))
+            .andExpect(jsonPath("$.[*].compilationToken").value(hasItem(DEFAULT_COMPILATION_TOKEN)));
     }
 }

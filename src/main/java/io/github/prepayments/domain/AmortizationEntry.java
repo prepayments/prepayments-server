@@ -53,6 +53,12 @@ public class AmortizationEntry implements Serializable {
     @Column(name = "upload_token")
     private String uploadToken;
 
+    @Column(name = "prepayment_data_id")
+    private Long prepaymentDataId;
+
+    @Column(name = "compilation_token")
+    private String compilationToken;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -178,6 +184,32 @@ public class AmortizationEntry implements Serializable {
     public void setUploadToken(String uploadToken) {
         this.uploadToken = uploadToken;
     }
+
+    public Long getPrepaymentDataId() {
+        return prepaymentDataId;
+    }
+
+    public AmortizationEntry prepaymentDataId(Long prepaymentDataId) {
+        this.prepaymentDataId = prepaymentDataId;
+        return this;
+    }
+
+    public void setPrepaymentDataId(Long prepaymentDataId) {
+        this.prepaymentDataId = prepaymentDataId;
+    }
+
+    public String getCompilationToken() {
+        return compilationToken;
+    }
+
+    public AmortizationEntry compilationToken(String compilationToken) {
+        this.compilationToken = compilationToken;
+        return this;
+    }
+
+    public void setCompilationToken(String compilationToken) {
+        this.compilationToken = compilationToken;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -210,6 +242,8 @@ public class AmortizationEntry implements Serializable {
             ", transactionAmount=" + getTransactionAmount() +
             ", amortizationDate='" + getAmortizationDate() + "'" +
             ", uploadToken='" + getUploadToken() + "'" +
+            ", prepaymentDataId=" + getPrepaymentDataId() +
+            ", compilationToken='" + getCompilationToken() + "'" +
             "}";
     }
 }

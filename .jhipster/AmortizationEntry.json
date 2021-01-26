@@ -38,6 +38,14 @@
     {
       "fieldName": "uploadToken",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "prepaymentDataId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "compilationToken",
+      "fieldType": "String"
     }
   ],
   "changelogDate": "20210111141634",

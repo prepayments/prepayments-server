@@ -46,6 +46,10 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
 
     private StringFilter uploadToken;
 
+    private LongFilter prepaymentDataId;
+
+    private StringFilter compilationToken;
+
     public AmortizationEntryCriteria() {
     }
 
@@ -60,6 +64,8 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
         this.transactionAmount = other.transactionAmount == null ? null : other.transactionAmount.copy();
         this.amortizationDate = other.amortizationDate == null ? null : other.amortizationDate.copy();
         this.uploadToken = other.uploadToken == null ? null : other.uploadToken.copy();
+        this.prepaymentDataId = other.prepaymentDataId == null ? null : other.prepaymentDataId.copy();
+        this.compilationToken = other.compilationToken == null ? null : other.compilationToken.copy();
     }
 
     @Override
@@ -147,6 +153,22 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
         this.uploadToken = uploadToken;
     }
 
+    public LongFilter getPrepaymentDataId() {
+        return prepaymentDataId;
+    }
+
+    public void setPrepaymentDataId(LongFilter prepaymentDataId) {
+        this.prepaymentDataId = prepaymentDataId;
+    }
+
+    public StringFilter getCompilationToken() {
+        return compilationToken;
+    }
+
+    public void setCompilationToken(StringFilter compilationToken) {
+        this.compilationToken = compilationToken;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -167,7 +189,9 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
             Objects.equals(prepaymentDate, that.prepaymentDate) &&
             Objects.equals(transactionAmount, that.transactionAmount) &&
             Objects.equals(amortizationDate, that.amortizationDate) &&
-            Objects.equals(uploadToken, that.uploadToken);
+            Objects.equals(uploadToken, that.uploadToken) &&
+            Objects.equals(prepaymentDataId, that.prepaymentDataId) &&
+            Objects.equals(compilationToken, that.compilationToken);
     }
 
     @Override
@@ -182,7 +206,9 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
         prepaymentDate,
         transactionAmount,
         amortizationDate,
-        uploadToken
+        uploadToken,
+        prepaymentDataId,
+        compilationToken
         );
     }
 
@@ -200,6 +226,8 @@ public class AmortizationEntryCriteria implements Serializable, Criteria {
                 (transactionAmount != null ? "transactionAmount=" + transactionAmount + ", " : "") +
                 (amortizationDate != null ? "amortizationDate=" + amortizationDate + ", " : "") +
                 (uploadToken != null ? "uploadToken=" + uploadToken + ", " : "") +
+                (prepaymentDataId != null ? "prepaymentDataId=" + prepaymentDataId + ", " : "") +
+                (compilationToken != null ? "compilationToken=" + compilationToken + ", " : "") +
             "}";
     }
 
