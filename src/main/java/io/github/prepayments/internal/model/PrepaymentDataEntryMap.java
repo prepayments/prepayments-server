@@ -16,7 +16,7 @@ public class PrepaymentDataEntryMap implements PrepaymentDataEntryDTOMapping  {
 
         PrepaymentDataDTO prepaymentDataDTO = new PrepaymentDataDTO();
 
-        prepaymentDataDTO.setId( arg0.getId() );
+        prepaymentDataDTO.setId( arg0.getPrepaymentDataId() );
         prepaymentDataDTO.setAccountName( arg0.getAccountName() );
         prepaymentDataDTO.setDescription( arg0.getDescription() );
         prepaymentDataDTO.setAccountNumber( arg0.getAccountNumber() );
@@ -44,6 +44,7 @@ public class PrepaymentDataEntryMap implements PrepaymentDataEntryDTOMapping  {
         prepaymentEntryDTO.setPrepaymentDate( arg0.getPrepaymentDate() );
         prepaymentEntryDTO.setUploadToken( arg0.getUploadToken() );
         prepaymentEntryDTO.setTransactionAmount(arg0.getPrepaymentAmount());
+        prepaymentEntryDTO.setPrepaymentDataId(arg0.getId());
 
         return prepaymentEntryDTO;
     }
