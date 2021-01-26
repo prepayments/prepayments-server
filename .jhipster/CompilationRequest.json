@@ -14,7 +14,7 @@
     {
       "fieldName": "compilationStatus",
       "fieldType": "CompilationStatus",
-      "fieldValues": "IN_PROGRESS,COMPLETE,FAILED"
+      "fieldValues": "IN_PROGRESS,COMPLETE,FAILED,NULLIFIED"
     },
     {
       "fieldName": "compilationType",
