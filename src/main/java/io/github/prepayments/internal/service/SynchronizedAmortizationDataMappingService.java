@@ -56,6 +56,9 @@ public class SynchronizedAmortizationDataMappingService implements AmortizationD
 
                 amortized.setAmortizationDate(amortizationDate);
 
+                // set prepayment-data-id
+                amortized.setPrepaymentDataId(entity.getId());
+
                 amortizationEntries.add(amortized);
             }
 
