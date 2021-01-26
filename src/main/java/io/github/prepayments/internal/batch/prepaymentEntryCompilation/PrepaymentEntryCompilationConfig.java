@@ -1,7 +1,6 @@
 package io.github.prepayments.internal.batch.prepaymentEntryCompilation;
 
 import io.github.prepayments.config.FileUploadsProperties;
-import io.github.prepayments.internal.batch.deletePrepaymentData.PrepaymentsDataDeletionJobListener;
 import io.github.prepayments.internal.service.BatchService;
 import io.github.prepayments.internal.service.CompilationJobTag;
 import io.github.prepayments.internal.service.PrepaymentDataCompilationDeserializer;
