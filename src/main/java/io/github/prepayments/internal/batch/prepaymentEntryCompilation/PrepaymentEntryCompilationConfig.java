@@ -3,8 +3,11 @@ package io.github.prepayments.internal.batch.prepaymentEntryCompilation;
 import io.github.prepayments.config.FileUploadsProperties;
 import io.github.prepayments.internal.service.BatchService;
 import io.github.prepayments.internal.service.PrepaymentDataCompilationDeserializer;
+import io.github.prepayments.internal.service.StatusUpdateService;
 import io.github.prepayments.repository.PrepaymentDataRepository;
+import io.github.prepayments.service.CompilationRequestService;
 import io.github.prepayments.service.PrepaymentDataQueryService;
+import io.github.prepayments.service.dto.CompilationRequestDTO;
 import io.github.prepayments.service.dto.PrepaymentDataDTO;
 import io.github.prepayments.service.dto.PrepaymentEntryDTO;
 import io.github.prepayments.service.mapper.PrepaymentDataMapper;
@@ -73,6 +76,13 @@ public class PrepaymentEntryCompilationConfig {
     @Qualifier("prepaymentEntryBatchService")
     private BatchService<PrepaymentEntryDTO> compilationBatchService;
 
+    @Autowired
+    private CompilationRequestService compilationRequestService;
+
+    @Autowired
+    @Qualifier("compilationRequestStatusUpdateService")
+    private StatusUpdateService<CompilationRequestDTO> compilationRequestStatusUpdateService;
+
 
     @Bean
     public ItemWriter<List<PrepaymentEntryDTO>> prepaymentEntryCompilationWriter() {
@@ -102,7 +112,7 @@ public class PrepaymentEntryCompilationConfig {
                                                                                  @Value("#{jobParameters['fileName']}") String fileName,
                                                                                  @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId);
+        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId, compilationRequestService, compilationRequestStatusUpdateService);
     }
 
     @Bean("prepaymentEntryCompilationJob")

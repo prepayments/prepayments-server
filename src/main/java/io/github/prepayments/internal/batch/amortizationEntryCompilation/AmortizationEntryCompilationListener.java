@@ -1,5 +1,8 @@
 package io.github.prepayments.internal.batch.amortizationEntryCompilation;
 
+import io.github.prepayments.internal.service.StatusUpdateService;
+import io.github.prepayments.service.CompilationRequestService;
+import io.github.prepayments.service.dto.CompilationRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -13,13 +16,25 @@ public class AmortizationEntryCompilationListener implements JobExecutionListene
     private final String fileName;
     private final String messageToken;
     private final long compilationRequestId;
+    private final CompilationRequestService compilationRequestService;
+    private final StatusUpdateService<CompilationRequestDTO> compilationRequestStatusUpdateService;
 
-    public AmortizationEntryCompilationListener(final long fileId, final long startUpTime, final String fileName, final String messageToken, final long compilationRequestId) {
+    public AmortizationEntryCompilationListener(
+        final long fileId,
+        final long startUpTime,
+        final String fileName,
+        final String messageToken,
+        final long compilationRequestId,
+        final CompilationRequestService compilationRequestService,
+        final StatusUpdateService<CompilationRequestDTO> compilationRequestStatusUpdateService
+    ) {
         this.fileId = fileId;
         this.startUpTime = startUpTime;
         this.fileName = fileName;
         this.messageToken = messageToken;
         this.compilationRequestId = compilationRequestId;
+        this.compilationRequestService = compilationRequestService;
+        this.compilationRequestStatusUpdateService = compilationRequestStatusUpdateService;
     }
 
     /**
@@ -32,6 +47,9 @@ public class AmortizationEntryCompilationListener implements JobExecutionListene
 
         log.info("New compilation job id : {} has started for file id : {}, with start time : {} for message-token {}; bearing the file-name {}", jobExecution.getJobId(), fileId, startUpTime,
                  messageToken, fileName);
+
+        // TODO Implement before job in order to properly configure starting time
+        compilationRequestService.findOne(compilationRequestId).ifPresent(compilationRequestStatusUpdateService::updateInProgress);
 
     }
 
@@ -49,6 +67,8 @@ public class AmortizationEntryCompilationListener implements JobExecutionListene
         String exitStatus = jobExecution.getExitStatus().getExitCode();
 
         long executionTime = System.currentTimeMillis() - startUpTime;
+
+        compilationRequestService.findOne(compilationRequestId).ifPresent(compilationRequestStatusUpdateService::updateStatusComplete);
 
         log.info("Job Id {}, for file-id : {} for message-token: {}; bearing the file-name: {} completed in : {}ms with status {}", jobExecution.getJobId(), fileId, messageToken, fileName,
                  executionTime, exitStatus);

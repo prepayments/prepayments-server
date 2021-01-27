@@ -3,9 +3,12 @@ package io.github.prepayments.internal.batch.amortizationEntryCompilation;
 import io.github.prepayments.config.FileUploadsProperties;
 import io.github.prepayments.internal.service.AmortizationDataMappingService;
 import io.github.prepayments.internal.service.BatchService;
+import io.github.prepayments.internal.service.StatusUpdateService;
 import io.github.prepayments.repository.PrepaymentDataRepository;
+import io.github.prepayments.service.CompilationRequestService;
 import io.github.prepayments.service.PrepaymentDataQueryService;
 import io.github.prepayments.service.dto.AmortizationEntryDTO;
+import io.github.prepayments.service.dto.CompilationRequestDTO;
 import io.github.prepayments.service.dto.PrepaymentDataDTO;
 import io.github.prepayments.service.mapper.PrepaymentDataMapper;
 import org.springframework.batch.core.Job;
@@ -73,6 +76,12 @@ public class AmortizationEntryCompilationConfig {
     @Autowired
     private AmortizationDataMappingService<PrepaymentDataDTO, AmortizationEntryDTO> amortizationDataMappingService;
 
+    @Autowired
+    private CompilationRequestService compilationRequestService;
+
+    @Autowired
+    @Qualifier("compilationRequestStatusUpdateService")
+    private StatusUpdateService<CompilationRequestDTO> compilationRequestStatusUpdateService;
 
     @Bean
     public ItemWriter<List<AmortizationEntryDTO>> amortizationEntryCompilationWriter() {
@@ -102,7 +111,7 @@ public class AmortizationEntryCompilationConfig {
                                                                                    @Value("#{jobParameters['fileName']}") String fileName,
                                                                                    @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new AmortizationEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId);
+        return new AmortizationEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId, compilationRequestService, compilationRequestStatusUpdateService);
     }
 
     @Bean("amortizationEntryCompilationJob")
