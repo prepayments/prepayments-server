@@ -1,10 +1,12 @@
 package io.github.prepayments.internal.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.prepayments.domain.enumeration.CompilationStatus;
 import io.github.prepayments.internal.compilation.AmortizationEntryCompilationNotice;
 import io.github.prepayments.internal.resource.decorator.CompilationRequestResourceDecorator;
 import io.github.prepayments.internal.resource.decorator.ICompilationRequestResourceDecorator;
 import io.github.prepayments.internal.service.HandlingService;
+import io.github.prepayments.internal.util.TokenGenerator;
 import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.CompilationRequestCriteria;
 import io.github.prepayments.service.dto.CompilationRequestDTO;
@@ -46,12 +48,15 @@ public class AppCompilationRequestResource extends CompilationRequestResourceDec
 
     private final PrepsFileUploadService fileUploadService;
 
+    private final TokenGenerator tokenGenerator;
+
     public AppCompilationRequestResource(final CompilationRequestResource compilationRequestResource,
                                          final @Qualifier("amortizationEntryCompilationNoticeHandlingService") HandlingService<AmortizationEntryCompilationNotice> compilationNoticeHandlingService,
-                                         final PrepsFileUploadService fileUploadService) {
+                                         final PrepsFileUploadService fileUploadService, final TokenGenerator tokenGenerator) {
         super(compilationRequestResource);
         this.compilationNoticeHandlingService = compilationNoticeHandlingService;
         this.fileUploadService = fileUploadService;
+        this.tokenGenerator = tokenGenerator;
     }
 
     /**
@@ -66,17 +71,22 @@ public class AppCompilationRequestResource extends CompilationRequestResourceDec
     public ResponseEntity<CompilationRequestDTO> createCompilationRequest(@RequestBody CompilationRequestDTO compilationRequestDTO) throws URISyntaxException, IllegalArgumentException {
         ResponseEntity<CompilationRequestDTO> response = super.createCompilationRequest(compilationRequestDTO);
 
-
         fileUploadService.findOne(compilationRequestDTO.getFileUploadId()).ifPresent(foundIt -> {
-            compilationNoticeHandlingService.handle(AmortizationEntryCompilationNotice.builder()
-                                                                                      .fileId(compilationRequestDTO.getFileUploadId())
-                                                                                      .timestamp(System.currentTimeMillis())
-                                                                                      .fileName(foundIt.getFileName())
-                                                                                      .uploadToken(foundIt.getUploadToken())
-                                                                                      .compilationType(compilationRequestDTO.getCompilationType())
-                                                                                      .compilationRequestId(Objects.requireNonNull(response.getBody()).getId())
-                                                                                      .compilationStatus(CompilationStatus.IN_PROGRESS)
-                                                                                      .build());
+            try {
+                compilationNoticeHandlingService.handle(AmortizationEntryCompilationNotice.builder()
+                                                                                          .fileId(compilationRequestDTO.getFileUploadId())
+                                                                                          .timestamp(System.currentTimeMillis())
+                                                                                          .fileName(foundIt.getFileName())
+                                                                                          .uploadToken(foundIt.getUploadToken())
+                                                                                          .compilationToken(tokenGenerator.md5Digest(foundIt))
+                                                                                          .compilationType(compilationRequestDTO.getCompilationType())
+                                                                                          .compilationRequestId(Objects.requireNonNull(response.getBody()).getId())
+                                                                                          .compilationStatus(CompilationStatus.IN_PROGRESS)
+                                                                                          .build());
+            } catch (JsonProcessingException e) {
+                // TODO Implement failed request response
+                Objects.requireNonNull(response.getBody()).setCompilationStatus(CompilationStatus.FAILED);
+            }
         });
 
         Objects.requireNonNull(response.getBody()).setCompilationStatus(CompilationStatus.IN_PROGRESS);

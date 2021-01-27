@@ -38,6 +38,9 @@ public class PrepaymentEntryCompilationConfig {
     @Value("#{jobParameters['uploadFileToken']}")
     private static String uploadFileToken;
 
+    @Value("#{jobParameters['compilationToken']}")
+    private static String compilationToken;
+
     @Value("#{jobParameters['fileName']}")
     private static String fileName;
 
@@ -81,8 +84,9 @@ public class PrepaymentEntryCompilationConfig {
     }
 
     @Bean("prepaymentEntryCompilationProcessor")
-    public ItemProcessor<List<PrepaymentDataDTO>, List<PrepaymentEntryDTO>> prepaymentEntryCompilationProcessor() {
-        return new PrepaymentEntryCompilationProcessor(compilationDeserializer);
+    @JobScope
+    public ItemProcessor<List<PrepaymentDataDTO>, List<PrepaymentEntryDTO>> prepaymentEntryCompilationProcessor(@Value("#{jobParameters['compilationToken']}") String compilationToken) {
+        return new PrepaymentEntryCompilationProcessor(compilationDeserializer, compilationToken);
     }
 
     /**
@@ -90,9 +94,9 @@ public class PrepaymentEntryCompilationConfig {
      */
     @Bean("prepaymentEntryCompilationReader")
     @JobScope
-    public ItemReader<List<PrepaymentDataDTO>> prepaymentEntryCompilationReader(@Value("#{jobParameters['messageToken']}") String messageToken) {
+    public ItemReader<List<PrepaymentDataDTO>> prepaymentEntryCompilationReader(@Value("#{jobParameters['uploadFileToken']}") String uploadFileToken) {
 
-        return new PrepaymentEntryCompilationReader(messageToken, prepaymentDataQueryService, fileUploadsProperties);
+        return new PrepaymentEntryCompilationReader(uploadFileToken, prepaymentDataQueryService, fileUploadsProperties);
     }
 
     @Bean
@@ -127,7 +131,7 @@ public class PrepaymentEntryCompilationConfig {
         return stepBuilderFactory.get("prepaymentEntryCompilationStep")
             .<List<PrepaymentDataDTO>, List<PrepaymentEntryDTO>>chunk(2)
             .reader(prepaymentEntryCompilationReader(uploadFileToken))
-            .processor(prepaymentEntryCompilationProcessor())
+            .processor(prepaymentEntryCompilationProcessor(compilationToken))
             .writer(prepaymentEntryCompilationWriter())
             .build();
         // @formatter:off

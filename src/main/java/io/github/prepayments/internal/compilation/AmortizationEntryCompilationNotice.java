@@ -23,6 +23,8 @@ public class AmortizationEntryCompilationNotice {
 
     private String uploadToken;
 
+    private String compilationToken;
+
     private String fileName;
 
     private CompilationType compilationType;

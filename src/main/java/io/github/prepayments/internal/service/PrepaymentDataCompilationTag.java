@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.prepayments.domain.enumeration.CompilationStatus;
 import io.github.prepayments.internal.util.TokenGenerator;
 import io.github.prepayments.service.CompilationRequestService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service("prepaymentDataCompilationTag")
@@ -18,6 +19,7 @@ public class PrepaymentDataCompilationTag implements CompilationJobTag {
     }
 
     @Override
+    @Async
     public void tag(final long compilationRequestId) {
 
         compilationRequestService.findOne(compilationRequestId).ifPresent(found -> {

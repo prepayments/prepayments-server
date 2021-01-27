@@ -39,6 +39,9 @@ public class AmortizationEntryCompilationConfig {
     @Value("#{jobParameters['uploadFileToken']}")
     private static String uploadFileToken;
 
+    @Value("#{jobParameters['compilationToken']}")
+    private static String compilationToken;
+
     @Value("#{jobParameters['fileName']}")
     private static String fileName;
 
@@ -81,8 +84,9 @@ public class AmortizationEntryCompilationConfig {
     }
 
     @Bean("amortizationEntryCompilationProcessor")
-    public ItemProcessor<List<PrepaymentDataDTO>, List<AmortizationEntryDTO>> amortizationEntryCompilationProcessor() {
-        return new AmortizationEntryCompilationProcessor(amortizationDataMappingService);
+    @JobScope
+    public ItemProcessor<List<PrepaymentDataDTO>, List<AmortizationEntryDTO>> amortizationEntryCompilationProcessor(@Value("#{jobParameters['compilationToken']}") String compilationToken) {
+        return new AmortizationEntryCompilationProcessor(amortizationDataMappingService, compilationToken);
     }
 
     /**
@@ -90,9 +94,9 @@ public class AmortizationEntryCompilationConfig {
      */
     @Bean("prepaymentEntryCompilationReader")
     @JobScope
-    public ItemReader<List<PrepaymentDataDTO>> amortizationEntryCompilationReader(@Value("#{jobParameters['messageToken']}") String messageToken) {
+    public ItemReader<List<PrepaymentDataDTO>> amortizationEntryCompilationReader(@Value("#{jobParameters['uploadFileToken']}") String uploadFileToken) {
 
-        return new AmortizationEntryCompilationReader(messageToken, prepaymentDataQueryService, fileUploadsProperties);
+        return new AmortizationEntryCompilationReader(uploadFileToken, prepaymentDataQueryService, fileUploadsProperties);
     }
 
     @Bean
@@ -127,7 +131,7 @@ public class AmortizationEntryCompilationConfig {
         return stepBuilderFactory.get("amortizationEntryCompilationStep")
             .<List<PrepaymentDataDTO>, List<AmortizationEntryDTO>>chunk(2)
             .reader(amortizationEntryCompilationReader(uploadFileToken))
-            .processor(amortizationEntryCompilationProcessor())
+            .processor(amortizationEntryCompilationProcessor(compilationToken))
             .writer(amortizationEntryCompilationWriter())
             .build();
         // @formatter:off
