@@ -6,7 +6,9 @@ import io.github.prepayments.internal.compilation.AmortizationEntryCompilationNo
 import io.github.prepayments.internal.resource.decorator.CompilationRequestResourceDecorator;
 import io.github.prepayments.internal.resource.decorator.ICompilationRequestResourceDecorator;
 import io.github.prepayments.internal.service.HandlingService;
+import io.github.prepayments.internal.service.StatusUpdateService;
 import io.github.prepayments.internal.util.TokenGenerator;
+import io.github.prepayments.service.CompilationRequestService;
 import io.github.prepayments.service.PrepsFileUploadService;
 import io.github.prepayments.service.dto.CompilationRequestCriteria;
 import io.github.prepayments.service.dto.CompilationRequestDTO;
@@ -14,6 +16,7 @@ import io.github.prepayments.web.rest.CompilationRequestResource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,17 +49,26 @@ public class AppCompilationRequestResource extends CompilationRequestResourceDec
 
     private final HandlingService<AmortizationEntryCompilationNotice> compilationNoticeHandlingService;
 
+    private final StatusUpdateService<CompilationRequestDTO> compilationRequestStatusUpdateService;
+
     private final PrepsFileUploadService fileUploadService;
 
     private final TokenGenerator tokenGenerator;
 
+    private final CompilationRequestService compilationRequestService;
+
     public AppCompilationRequestResource(final CompilationRequestResource compilationRequestResource,
                                          final @Qualifier("amortizationEntryCompilationNoticeHandlingService") HandlingService<AmortizationEntryCompilationNotice> compilationNoticeHandlingService,
-                                         final PrepsFileUploadService fileUploadService, final TokenGenerator tokenGenerator) {
+                                         final StatusUpdateService<CompilationRequestDTO> compilationRequestStatusUpdateService,
+                                         final PrepsFileUploadService fileUploadService,
+                                         final TokenGenerator tokenGenerator,
+                                         final CompilationRequestService compilationRequestService) {
         super(compilationRequestResource);
         this.compilationNoticeHandlingService = compilationNoticeHandlingService;
+        this.compilationRequestStatusUpdateService = compilationRequestStatusUpdateService;
         this.fileUploadService = fileUploadService;
         this.tokenGenerator = tokenGenerator;
+        this.compilationRequestService = compilationRequestService;
     }
 
     /**
@@ -73,25 +85,41 @@ public class AppCompilationRequestResource extends CompilationRequestResourceDec
 
         fileUploadService.findOne(compilationRequestDTO.getFileUploadId()).ifPresent(foundIt -> {
             try {
+                String compilationToken = tokenGenerator.md5Digest(foundIt);
+
+                // Use async service to update for quicker response to client
+                updateCompilationStatusToken(response, compilationToken);
+
                 compilationNoticeHandlingService.handle(AmortizationEntryCompilationNotice.builder()
                                                                                           .fileId(compilationRequestDTO.getFileUploadId())
                                                                                           .timestamp(System.currentTimeMillis())
                                                                                           .fileName(foundIt.getFileName())
                                                                                           .uploadToken(foundIt.getUploadToken())
-                                                                                          .compilationToken(tokenGenerator.md5Digest(foundIt))
+                                                                                          .compilationToken(compilationToken)
                                                                                           .compilationType(compilationRequestDTO.getCompilationType())
                                                                                           .compilationRequestId(Objects.requireNonNull(response.getBody()).getId())
                                                                                           .compilationStatus(CompilationStatus.IN_PROGRESS)
                                                                                           .build());
             } catch (JsonProcessingException e) {
-                // TODO Implement failed request response
-                Objects.requireNonNull(response.getBody()).setCompilationStatus(CompilationStatus.FAILED);
+                compilationRequestStatusUpdateService.updateStatusFailed(response.getBody());
             }
         });
 
-        Objects.requireNonNull(response.getBody()).setCompilationStatus(CompilationStatus.IN_PROGRESS);
+        // TODO do this in the job-listener compilationRequestStatusUpdateService.updateInProgress(response.getBody());
 
         return response;
+    }
+
+    @Async
+    protected void updateCompilationStatusToken(ResponseEntity<CompilationRequestDTO> response, String token) {
+
+        compilationRequestService.findOne(Objects.requireNonNull(response.getBody()).getId()).ifPresent(request -> {
+            request.setCompilationToken(token);
+
+            // TODO must be explicit for my comfort
+            compilationRequestService.save(request);
+        });
+
     }
 
     /**
