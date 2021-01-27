@@ -3,7 +3,6 @@ package io.github.prepayments.internal.batch.amortizationEntryCompilation;
 import io.github.prepayments.config.FileUploadsProperties;
 import io.github.prepayments.internal.service.AmortizationDataMappingService;
 import io.github.prepayments.internal.service.BatchService;
-import io.github.prepayments.internal.service.CompilationJobTag;
 import io.github.prepayments.repository.PrepaymentDataRepository;
 import io.github.prepayments.service.PrepaymentDataQueryService;
 import io.github.prepayments.service.dto.AmortizationEntryDTO;
@@ -47,9 +46,6 @@ public class AmortizationEntryCompilationConfig {
 
     @Value("#{jobParameters['compilationRequestId']}")
     private static long compilationRequestId;
-
-    @Autowired
-    private CompilationJobTag compilationJobTag;
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -106,7 +102,7 @@ public class AmortizationEntryCompilationConfig {
                                                                                    @Value("#{jobParameters['fileName']}") String fileName,
                                                                                    @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new AmortizationEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId, compilationJobTag);
+        return new AmortizationEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId);
     }
 
     @Bean("amortizationEntryCompilationJob")

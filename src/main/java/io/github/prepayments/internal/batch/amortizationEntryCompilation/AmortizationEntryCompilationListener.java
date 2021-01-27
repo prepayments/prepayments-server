@@ -1,6 +1,5 @@
 package io.github.prepayments.internal.batch.amortizationEntryCompilation;
 
-import io.github.prepayments.internal.service.CompilationJobTag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -15,16 +14,12 @@ public class AmortizationEntryCompilationListener implements JobExecutionListene
     private final String messageToken;
     private final long compilationRequestId;
 
-    private final CompilationJobTag compilationJobTag;
-
-    public AmortizationEntryCompilationListener(final long fileId, final long startUpTime, final String fileName, final String messageToken, final long compilationRequestId,
-                                              final CompilationJobTag compilationJobTag) {
+    public AmortizationEntryCompilationListener(final long fileId, final long startUpTime, final String fileName, final String messageToken, final long compilationRequestId) {
         this.fileId = fileId;
         this.startUpTime = startUpTime;
         this.fileName = fileName;
         this.messageToken = messageToken;
         this.compilationRequestId = compilationRequestId;
-        this.compilationJobTag = compilationJobTag;
     }
 
     /**
@@ -58,6 +53,5 @@ public class AmortizationEntryCompilationListener implements JobExecutionListene
         log.info("Job Id {}, for file-id : {} for message-token: {}; bearing the file-name: {} completed in : {}ms with status {}", jobExecution.getJobId(), fileId, messageToken, fileName,
                  executionTime, exitStatus);
 
-        compilationJobTag.tag(compilationRequestId);
     }
 }

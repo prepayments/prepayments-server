@@ -2,7 +2,6 @@ package io.github.prepayments.internal.batch.prepaymentEntryCompilation;
 
 import io.github.prepayments.config.FileUploadsProperties;
 import io.github.prepayments.internal.service.BatchService;
-import io.github.prepayments.internal.service.CompilationJobTag;
 import io.github.prepayments.internal.service.PrepaymentDataCompilationDeserializer;
 import io.github.prepayments.repository.PrepaymentDataRepository;
 import io.github.prepayments.service.PrepaymentDataQueryService;
@@ -46,9 +45,6 @@ public class PrepaymentEntryCompilationConfig {
 
     @Value("#{jobParameters['compilationRequestId']}")
     private static long compilationRequestId;
-
-    @Autowired
-    private CompilationJobTag compilationJobTag;
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -106,7 +102,7 @@ public class PrepaymentEntryCompilationConfig {
                                                                                  @Value("#{jobParameters['fileName']}") String fileName,
                                                                                  @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId, compilationJobTag);
+        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId);
     }
 
     @Bean("prepaymentEntryCompilationJob")
