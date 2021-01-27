@@ -26,6 +26,11 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This controller uses the underlying implementation for the compilation-request entity both to create an instance
+ * in the db and also to trigger a batch process for compilation of prepayment-data instances to prepayment-entry
+ * and amortization-entry.
+ */
 @RestController
 @RequestMapping("/api/app")
 public class AppCompilationRequestResource extends CompilationRequestResourceDecorator implements ICompilationRequestResourceDecorator {
