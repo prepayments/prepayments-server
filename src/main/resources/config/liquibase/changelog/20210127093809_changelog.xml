@@ -1,0 +1,68 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.9.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-2">
+        <addColumn tableName="amortization_entry">
+            <column name="compilation_token" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-3">
+        <addColumn tableName="prepayment_entry">
+            <column name="compilation_token" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-4">
+        <addColumn tableName="amortization_entry">
+            <column name="prepayment_data_id" type="int8"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-5">
+        <addColumn tableName="prepayment_entry">
+            <column name="prepayment_data_id" type="int8"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-6">
+        <dropForeignKeyConstraint baseTableName="batch_job_execution_context" constraintName="job_exec_ctx_fk"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-7">
+        <dropForeignKeyConstraint baseTableName="batch_job_execution_params" constraintName="job_exec_params_fk"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-8">
+        <dropForeignKeyConstraint baseTableName="batch_step_execution" constraintName="job_execution_step_fk"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-9">
+        <dropForeignKeyConstraint baseTableName="batch_job_execution" constraintName="job_instance_execution_fk"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-10">
+        <dropForeignKeyConstraint baseTableName="batch_step_execution_context" constraintName="step_exec_ctx_fk"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-11">
+        <dropTable tableName="batch_job_execution"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-12">
+        <dropTable tableName="batch_job_execution_context"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-13">
+        <dropTable tableName="batch_job_execution_params"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-14">
+        <dropTable tableName="batch_job_instance"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-15">
+        <dropTable tableName="batch_step_execution"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-16">
+        <dropTable tableName="batch_step_execution_context"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-17">
+        <dropSequence sequenceName="batch_job_execution_seq"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-18">
+        <dropSequence sequenceName="batch_job_seq"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-19">
+        <dropSequence sequenceName="batch_step_execution_seq"/>
+    </changeSet>
+    <changeSet author="edwin.njeru (generated)" id="1611740332780-1">
+        <alterSequence sequenceName="sequence_generator"/>
+    </changeSet>
+</databaseChangeLog>

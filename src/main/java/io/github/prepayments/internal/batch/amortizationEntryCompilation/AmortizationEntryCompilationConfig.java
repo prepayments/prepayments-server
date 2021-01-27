@@ -36,8 +36,8 @@ public class AmortizationEntryCompilationConfig {
     @Value("#{jobParameters['startUpTime']}")
     private static long startUpTime;
 
-    @Value("#{jobParameters['messageToken']}")
-    private static String messageToken;
+    @Value("#{jobParameters['uploadFileToken']}")
+    private static String uploadFileToken;
 
     @Value("#{jobParameters['fileName']}")
     private static String fileName;
@@ -98,11 +98,11 @@ public class AmortizationEntryCompilationConfig {
     @Bean
     @JobScope
     public AmortizationEntryCompilationListener amortizationEntryCompilationListener(@Value("#{jobParameters['fileId']}") long fileId, @Value("#{jobParameters['startUpTime']}") long startUpTime,
-                                                                                   @Value("#{jobParameters['messageToken']}") String messageToken,
+                                                                                   @Value("#{jobParameters['uploadFileToken']}") String uploadFileToken,
                                                                                    @Value("#{jobParameters['fileName']}") String fileName,
                                                                                    @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new AmortizationEntryCompilationListener(fileId, startUpTime, fileName, messageToken, compilationRequestId, compilationJobTag);
+        return new AmortizationEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId, compilationJobTag);
     }
 
     @Bean("amortizationEntryCompilationJob")
@@ -110,7 +110,7 @@ public class AmortizationEntryCompilationConfig {
         // @formatter:off
         return jobBuilderFactory.get("amortizationEntryCompilationJob")
             .preventRestart()
-            .listener(amortizationEntryCompilationListener(fileId, startUpTime, fileName, messageToken, compilationRequestId))
+            .listener(amortizationEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId))
             .incrementer(new RunIdIncrementer())
             .flow(amortizationEntryCompilationStep())
             .end()
@@ -126,7 +126,7 @@ public class AmortizationEntryCompilationConfig {
         // @formatter:off
         return stepBuilderFactory.get("amortizationEntryCompilationStep")
             .<List<PrepaymentDataDTO>, List<AmortizationEntryDTO>>chunk(2)
-            .reader(amortizationEntryCompilationReader(messageToken))
+            .reader(amortizationEntryCompilationReader(uploadFileToken))
             .processor(amortizationEntryCompilationProcessor())
             .writer(amortizationEntryCompilationWriter())
             .build();

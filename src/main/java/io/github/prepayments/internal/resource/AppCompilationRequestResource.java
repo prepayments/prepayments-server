@@ -30,6 +30,13 @@ import java.util.Objects;
  * This controller uses the underlying implementation for the compilation-request entity both to create an instance
  * in the db and also to trigger a batch process for compilation of prepayment-data instances to prepayment-entry
  * and amortization-entry.
+ *
+ * The upload-token is increasingly crucial here because it's representative of the initial file-upload that
+ * brings data to life within the system, and in this particular flow of logic we use it to extract the data
+ * that was created using that file-ID so that it can be used in a reader to begin processing the compilation.
+ *
+ * Another token is the compilation-token; this is a unique token that is associated with the precess that
+ * leads to existence of instances of entities created as a result of a compilation-request
  */
 @RestController
 @RequestMapping("/api/app")

@@ -38,7 +38,7 @@ public class BatchSupportedAmortizationEntryCompilationProcessor
 
             jobParametersBuilder.addLong("fileId", notification.getFileId());
             jobParametersBuilder.addLong("startUpTime", notification.getTimestamp());
-            jobParametersBuilder.addString("messageToken", notification.getUploadToken());
+            jobParametersBuilder.addString("uploadFileToken", notification.getUploadToken());
             jobParametersBuilder.addString("fileName", notification.getFileName());
             jobParametersBuilder.addLong("compilationRequestId", notification.getCompilationRequestId());
 

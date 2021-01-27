@@ -35,8 +35,8 @@ public class PrepaymentEntryCompilationConfig {
     @Value("#{jobParameters['startUpTime']}")
     private static long startUpTime;
 
-    @Value("#{jobParameters['messageToken']}")
-    private static String messageToken;
+    @Value("#{jobParameters['uploadFileToken']}")
+    private static String uploadFileToken;
 
     @Value("#{jobParameters['fileName']}")
     private static String fileName;
@@ -98,11 +98,11 @@ public class PrepaymentEntryCompilationConfig {
     @Bean
     @JobScope
     public PrepaymentEntryCompilationListener prepaymentEntryCompilationListener(@Value("#{jobParameters['fileId']}") long fileId, @Value("#{jobParameters['startUpTime']}") long startUpTime,
-                                                                                 @Value("#{jobParameters['messageToken']}") String messageToken,
+                                                                                 @Value("#{jobParameters['uploadFileToken']}") String uploadFileToken,
                                                                                  @Value("#{jobParameters['fileName']}") String fileName,
                                                                                  @Value("#{jobParameters['compilationRequestId']}") long compilationRequestId) {
 
-        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, messageToken, compilationRequestId, compilationJobTag);
+        return new PrepaymentEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId, compilationJobTag);
     }
 
     @Bean("prepaymentEntryCompilationJob")
@@ -110,7 +110,7 @@ public class PrepaymentEntryCompilationConfig {
         // @formatter:off
         return jobBuilderFactory.get("prepaymentEntryCompilationJob")
             .preventRestart()
-            .listener(prepaymentEntryCompilationListener(fileId, startUpTime, fileName, messageToken, compilationRequestId))
+            .listener(prepaymentEntryCompilationListener(fileId, startUpTime, fileName, uploadFileToken, compilationRequestId))
             .incrementer(new RunIdIncrementer())
             .flow(prepaymentEntryCompilationStep())
             .end()
@@ -126,7 +126,7 @@ public class PrepaymentEntryCompilationConfig {
         // @formatter:off
         return stepBuilderFactory.get("prepaymentEntryCompilationStep")
             .<List<PrepaymentDataDTO>, List<PrepaymentEntryDTO>>chunk(2)
-            .reader(prepaymentEntryCompilationReader(messageToken))
+            .reader(prepaymentEntryCompilationReader(uploadFileToken))
             .processor(prepaymentEntryCompilationProcessor())
             .writer(prepaymentEntryCompilationWriter())
             .build();

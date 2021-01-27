@@ -21,7 +21,7 @@ import java.util.List;
 @Scope("job")
 public class PrepaymentEntryCompilationReader implements ItemReader<List<PrepaymentDataDTO>> {
 
-    private String messageToken;
+    private String uploadFileToken;
     private PrepaymentDataCriteria prepaymentDataCriteria;
     private final PrepaymentDataQueryService prepaymentDataQueryService;
 
@@ -30,9 +30,9 @@ public class PrepaymentEntryCompilationReader implements ItemReader<List<Prepaym
 
     private ListPartition<PrepaymentDataDTO> prepaymentsDataDTOPartition;
 
-    PrepaymentEntryCompilationReader(@Value("#{jobParameters['messageToken']}") String messageToken, final PrepaymentDataQueryService prepaymentDataQueryService,
+    PrepaymentEntryCompilationReader(@Value("#{jobParameters['uploadFileToken']}") String uploadFileToken, final PrepaymentDataQueryService prepaymentDataQueryService,
                                    final FileUploadsProperties fileUploadsProperties) {
-        this.messageToken = messageToken;
+        this.uploadFileToken = uploadFileToken;
         this.prepaymentDataQueryService = prepaymentDataQueryService;
         this.fileUploadsProperties = fileUploadsProperties;
     }
@@ -43,11 +43,11 @@ public class PrepaymentEntryCompilationReader implements ItemReader<List<Prepaym
     @PostConstruct
     private void initializeResources() {
 
-        log.info("Lining up prepayments-data with the token : {}", messageToken);
+        log.info("Lining up prepayments-data with the token : {}", uploadFileToken);
 
         prepaymentDataCriteria = new PrepaymentDataCriteria();
         StringFilter uploadTokenFilter = new StringFilter();
-        uploadTokenFilter.setEquals(messageToken);
+        uploadTokenFilter.setEquals(uploadFileToken);
         prepaymentDataCriteria.setUploadToken(uploadTokenFilter);
 
         final List<PrepaymentDataDTO> unProcessedItems = prepaymentDataQueryService.findByCriteria(prepaymentDataCriteria);
