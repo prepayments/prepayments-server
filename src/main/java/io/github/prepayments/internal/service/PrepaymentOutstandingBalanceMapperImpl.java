@@ -11,7 +11,12 @@ public class PrepaymentOutstandingBalanceMapperImpl implements PrepaymentOutstan
     public PrepaymentBalanceDTO map(final PrepaymentEntryDTO prepaymentEntry) {
 
         return PrepaymentBalanceDTO.builder()
-                                   .// TODO Implement this
+                                   .accountName(prepaymentEntry.getAccountName())
+                                   .description(prepaymentEntry.getDescription())
+                                   .accountNumber(prepaymentEntry.getAccountNumber())
+                                   .prepaymentNumber(prepaymentEntry.getPrepaymentNumber())
+                                   .prepaymentDate(prepaymentEntry.getPrepaymentDate())
+                                   .outstandingAmount(prepaymentEntry.getTransactionAmount())
                                    .build();
     }
 }

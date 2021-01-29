@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 /**
  * This represents the prepayment with the amount of balance at a given date after we have applied
  * the correponding number of future amortization-entries
@@ -17,8 +20,6 @@ import lombok.ToString;
 @ToString
 public class PrepaymentBalanceDTO {
 
-    private Long rowIndex;
-
     private String accountName;
 
     private String description;
@@ -29,7 +30,9 @@ public class PrepaymentBalanceDTO {
 
     private String prepaymentNumber;
 
-    private String prepaymentDate;
+    private LocalDate prepaymentDate;
 
-    private double prepaymentAmount;
+    private BigDecimal outstandingAmount;
+
+    private long prepaymentDataId;
 }

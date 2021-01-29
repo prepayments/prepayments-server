@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This is the implementation for the outstanding-balance-service for prepayment-balance-dto.
@@ -28,7 +29,10 @@ import java.util.List;
  * The balance-date is an end of line cut off; that is entities that do not begin before the balance date
  * are irrelevant for consideration.
  * At the same time all previously created entities that are fully amortised do not need to enter into the
- * consideration
+ * consideration.
+ * Logic for filtering off the former is easy, but logic for removing the later is either expensive or difficult
+ * to intuit. This is the first iteration of the program and therefore the developer has chosen to cop-out by picking
+ * the easiest approach; to get filtered data from the database and process the result using java Stream API.
  */
 @Service("prepaymentOutstandingBalanceService")
 public class PrepaymentOutstandingBalanceService implements OutstandingBalanceService<PrepaymentBalanceDTO> {
@@ -55,12 +59,21 @@ public class PrepaymentOutstandingBalanceService implements OutstandingBalanceSe
 
         return prepaymentEntries.stream()
                          .peek(prep -> {
-                             amortizationEntries.stream()
-                                                .filter(amort -> amort.getPrepaymentDataId().equals(prep.getPrepaymentDataId()))
-                                                .map(AmortizationEntryDTO::getTransactionAmount)
-                                                .reduce(BigDecimal::add)
-                                                .ifPresent(amortizationAmount -> prep.setTransactionAmount(prep.getTransactionAmount().subtract(amortizationAmount)));
+                             amortizationEntries
+                                        .stream()
+                                        .filter(amort -> amort.getPrepaymentDataId().equals(prep.getPrepaymentDataId()))
+                                        .map(AmortizationEntryDTO::getTransactionAmount)
+                                        .reduce(BigDecimal::add)
+                                        .ifPresent(amortizationAmount -> prep.setTransactionAmount(prep.getTransactionAmount().subtract(amortizationAmount)));
                          }).map(prepaymentOutstandingBalanceMapper::map)
+                                .peek(bal -> {
+                                    amortizationEntries
+                                        .stream()
+                                        .filter(amort -> amort.getPrepaymentDataId().equals(bal.getPrepaymentDataId()))
+                                        .map(AmortizationEntryDTO::getExpenseAccountNumber)
+                                        .findFirst()
+                                        .ifPresent(bal::setExpenseAccountNumber);
+                                })
                          .collect(ImmutableList.toImmutableList());
     }
 
